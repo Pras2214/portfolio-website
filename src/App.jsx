@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import ExperiencePage from './pages/ExperiencePage';
 import ProjectsPage from './pages/ProjectsPage';
 
+import NotFound from './pages/NotFound';
+
 function App() {
   return (
     <Router>
@@ -14,6 +16,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/experience" element={<ExperiencePage />} />
             <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
       </ThemeProvider>

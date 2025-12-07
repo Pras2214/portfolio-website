@@ -1,27 +1,36 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import './Header.css';
 
 const Header = () => {
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = useState(false); // Desktop dropdown
+    const [isMobileOpen, setIsMobileOpen] = useState(false); // Mobile menu
+    const location = useLocation();
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setIsMobileOpen(false);
+    }, [location]);
+
+    // Prevent scroll when mobile menu is open
+    useEffect(() => {
+        if (isMobileOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+    }, [isMobileOpen]);
 
     return (
-        <header style={{
-            padding: '1.25rem 2rem',
-            marginBottom: '4rem',
-            position: 'sticky',
-            top: 0,
-            zIndex: 50,
-            backgroundColor: 'var(--bg-color)',
-            transition: 'background-color 0.3s ease',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)'
-        }} className="flex-between">
-            <div style={{ fontSize: '1.25rem', fontWeight: 600, letterSpacing: '-0.02em' }}>
-                <Link to="/" style={{ color: 'var(--text-color)', fontFamily: 'var(--font-family)', fontWeight: 600 }} className='text-uppercase'>Prasann Parikh</Link>
+        <header className="site-header flex-between">
+            <div className="header-logo">
+                <Link to="/" className='text-uppercase'>Prasann Parikh</Link>
             </div>
-            <nav style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '4rem' }}>
-                <Link to="/experience" style={{ fontSize: '0.9rem', color: 'var(--text-color)', fontWeight: 500, textDecoration: 'none' }}>Experience</Link>
 
-                <Link to="/projects" style={{ fontSize: '0.9rem', color: 'var(--text-color)', fontWeight: 500, textDecoration: 'none' }}>Projects</Link>
+            {/* Desktop Navigation */}
+            <nav className="desktop-nav">
+                <Link to="/experience">Experience</Link>
+                <Link to="/projects">Projects</Link>
 
                 <div
                     onMouseEnter={() => setIsOpen(true)}
@@ -39,7 +48,7 @@ const Header = () => {
                             cursor: 'pointer',
                             color: 'var(--text-color)',
                             outline: 'none',
-                            minWidth: '80px', // Prevent shift of container if any
+                            minWidth: '80px',
                             textAlign: 'right',
                             display: 'flex',
                             alignItems: 'center',
@@ -56,7 +65,7 @@ const Header = () => {
                                 position: 'absolute',
                                 right: 0,
                                 top: '100%',
-                                paddingTop: '1rem', // Gap filler to prevent mouse leave
+                                paddingTop: '1rem',
                                 zIndex: 100
                             }}>
                             <div style={{
@@ -86,6 +95,47 @@ const Header = () => {
                     )}
                 </div>
             </nav>
+
+            {/* Mobile Nav Toggle */}
+            <button
+                className="mobile-nav-toggle"
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                aria-label="Toggle menu"
+            >
+                {isMobileOpen ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                ) : (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 12h18M3 6h18M3 18h18" />
+                    </svg>
+                )}
+            </button>
+
+            {/* Mobile Menu Overlay */}
+            <div className={`mobile-menu-overlay ${isMobileOpen ? 'open' : ''}`}>
+                <Link to="/experience" className="mobile-menu-link">Experience</Link>
+                <Link to="/projects" className="mobile-menu-link">Projects</Link>
+
+                <div className="mobile-connect-section">
+                    <div className="mobile-connect-title">Connect</div>
+                    <div className="mobile-connect-items">
+                        <div className="mobile-connect-item">
+                            <span>Email</span>
+                            <a href="mailto:parikhprasann@gmail.com">parikhprasann@gmail.com</a>
+                        </div>
+                        <div className="mobile-connect-item">
+                            <span>Phone</span>
+                            <a href="tel:+917990688967">+91 7990688967</a>
+                        </div>
+                        <div className="mobile-connect-item">
+                            <span>Resume</span>
+                            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">View Resume</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </header>
     );
 };
