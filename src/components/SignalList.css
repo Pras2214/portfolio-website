@@ -1,0 +1,97 @@
+/* SignalList.css */
+.signal-list {
+    padding-left: 0;
+    width: 100%;
+}
+
+.signal-item {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: padding-left 0.3s ease;
+    /* Restoring the specific property for hover */
+    cursor: pointer;
+}
+
+.signal-item:hover {
+    border-bottom-color: var(--accent-color);
+    padding-left: 10px;
+    /* Restored hover animation */
+}
+
+/* New wrapper for the top part (number + title + meta) to keep them aligned */
+.signal-header {
+    display: flex;
+    align-items: baseline;
+    width: 100%;
+}
+
+.signal-number {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    width: 60px;
+    flex-shrink: 0;
+    opacity: 0.5;
+    font-size: 0.9rem;
+}
+
+.signal-content-wrapper {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.signal-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.1;
+    display: block;
+    color: var(--text-color);
+    transition: color 0.2s ease;
+}
+
+.signal-meta {
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--subtle-color);
+}
+
+/* Expanded State Details */
+.signal-details {
+    padding-left: 60px;
+    /* Align with content */
+    padding-top: 1.5rem;
+    padding-bottom: 0.5rem;
+    max-width: 600px;
+    /* No transitions here that would conflict with the parent padding */
+}
+
+.signal-details p {
+    font-size: 1.1rem;
+    color: var(--subtle-color);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.read-more-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+}
+
+.read-more-btn:hover {
+    color: var(--accent-color);
+}

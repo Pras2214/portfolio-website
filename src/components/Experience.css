@@ -1,0 +1,118 @@
+/* Experience.css */
+
+.experience-section {
+    padding: 0 0 4rem;
+    margin-bottom: 4rem;
+}
+
+.experience-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 3rem;
+}
+
+.experience-title {
+    font-size: 0.8rem;
+    color: var(--subtle-color);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+/* The vertical line */
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    bottom: 0;
+    left: 7px;
+    width: 1px;
+    background: #eaeaea;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 30px;
+    padding-bottom: 3rem;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+/* The dot on the timeline */
+.timeline-marker {
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    /* Align with title */
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--text-color);
+    border: 2px solid var(--bg-color);
+    /* Cutout effect if needed, but solid looks better on line */
+    z-index: 1;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.timeline-item:hover .timeline-marker {
+    transform: scale(1.5);
+    background-color: var(--text-color);
+    /* Or accent color from palette if we want to be fancy */
+}
+
+.timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.timeline-role {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.timeline-company {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    color: var(--subtle-color);
+    margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.timeline-description {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+}
+
+.timeline-description li {
+    font-size: 1rem;
+    color: var(--subtle-color);
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    position: relative;
+    padding-left: 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    .timeline-item {
+        padding-left: 20px;
+    }
+}

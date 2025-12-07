@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>The Architect Squircle - Closed Bottom</title>
+  <defs>
+    <mask id="architect-mask-closed-bottom">
+      <rect x="0" y="0" width="64" height="64" fill="white" />
+      
+      <path d="M 20 60 L 20 36 L 36 36 C 42 36, 46 40, 46 46 C 46 52, 42 54, 36 54 L 20 54 L 20 60" stroke="black" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      
+      <path d="M 20 4 L 20 16" stroke="black" stroke-width="4" fill="none" stroke-linecap="round" />
+    </mask>
+  </defs>
+
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="#1a1a1a" mask="url(#architect-mask-closed-bottom)" />
+</svg>

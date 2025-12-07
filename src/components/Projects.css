@@ -1,0 +1,136 @@
+/* Projects.css */
+.projects-container {
+    padding: 0 0 4rem;
+}
+
+.projects-header {
+    margin-bottom: 4rem;
+    text-align: center;
+}
+
+.projects-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.projects-subtitle {
+    color: var(--subtle-color);
+    font-size: 1rem;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.project-card {
+    position: relative;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    background-color: var(--bg-color);
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+}
+
+.project-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.project-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.project-name {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+    transition: all 0.2s ease;
+}
+
+.project-card:hover .project-name,
+.project-card:hover .project-arrow,
+.project-card:hover .project-description {
+    animation: fadeIn 0.3s ease-in-out;
+    color: var(--accent-color);
+}
+
+.project-arrow {
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    font-size: 1.25rem;
+}
+
+.project-card:hover .project-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.project-date {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--subtle-color);
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.project-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--subtle-color);
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    flex-grow: 1;
+}
+
+.project-tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tech-tag {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid #eaeaea;
+    border-radius: 20px;
+    color: var(--subtle-color);
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.project-card:hover .tech-tag {
+    color: var(--text-color);
+    border-color: #d0d0d0;
+    /* Subtle darkening instead of accent color */
+}
+
+@media (max-width: 768px) {
+    .project-arrow {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
