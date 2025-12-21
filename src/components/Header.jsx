@@ -31,6 +31,7 @@ const Header = () => {
             <nav className="desktop-nav">
                 <Link to="/experience">Experience</Link>
                 <Link to="/projects">Projects</Link>
+                <Link to="/portfolio">Portfolio</Link>
 
                 <div
                     onMouseEnter={() => setIsOpen(true)}
@@ -117,6 +118,7 @@ const Header = () => {
             <div className={`mobile-menu-overlay ${isMobileOpen ? 'open' : ''}`}>
                 <Link to="/experience" className="mobile-menu-link">Experience</Link>
                 <Link to="/projects" className="mobile-menu-link">Projects</Link>
+                <Link to="/portfolio" className="mobile-menu-link">Portfolio</Link>
 
                 <div className="mobile-connect-section">
                     <div className="mobile-connect-title">Connect</div>
