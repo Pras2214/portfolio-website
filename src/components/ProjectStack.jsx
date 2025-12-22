@@ -240,6 +240,15 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
 
     // ... useFrame for text bounds removed as not critical here ...
 
+    // Dynamic Font Size Calculation to fit long names in the box
+    const MAX_CHAR_BEFORE_SHRINK = 12; // Start shrinking earlier to be safe
+    const titleLength = project.title ? project.title.length : 10;
+    // We add a slight buffer to the divisor to make the shrink curve gentler but effective
+    const fontScale = titleLength > MAX_CHAR_BEFORE_SHRINK ? (MAX_CHAR_BEFORE_SHRINK / titleLength) : 1;
+    const finalFontSize = pillFontSize * fontScale;
+    const minFontSize = 0.14; // Prevent it from getting unreadably small
+    const dynamicFontSize = Math.max(finalFontSize, minFontSize);
+
     return (
         <group
             ref={meshRef}
@@ -301,7 +310,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                     <Text
                         position={[0, 0.21, 0]}
                         rotation={[-Math.PI / 2, 0, 0]}
-                        fontSize={pillFontSize}
+                        fontSize={dynamicFontSize}
                         color="#1a1a1a"
                         fontStyle="italic"
                         font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
