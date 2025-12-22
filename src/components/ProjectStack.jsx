@@ -1,4 +1,5 @@
-import React, { useRef, useState, useMemo } from 'react';
+// ... imports
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useScroll, RoundedBox, useTexture, Text, Html } from '@react-three/drei';
 import { easing } from 'maath';
@@ -7,13 +8,13 @@ import * as THREE from 'three';
 // Card Dimensions Config
 const CARD_DIMENSIONS = {
     desktop: { box: [4.5, 0.15, 3.2], plane: [4.45, 3.15], textWidth: 4 },
-    mobile: { box: [1.5, 0.15, 3], plane: [1.55, 3], textWidth: 1.4 },
+    mobile: { box: [1.5, 0.15, 2.95], plane: [1.5, 2.95], textWidth: 1.4 },
     square: { box: [3.5, 0.15, 3.5], plane: [3.45, 3.45], textWidth: 3.2 },
     a4_vertical: { box: [2.5, 0.15, 3.53], plane: [2.45, 3.48], textWidth: 2.8 },
     a4_horizontal: { box: [3.53, 0.15, 2.5], plane: [3.48, 2.45], textWidth: 2.8 }
 };
 
-// Custom Shader for Smooth Transition
+// ... Shader Material (no changes) ...
 const ImageTransitionMaterial = {
     uniforms: {
         tex1: { value: null },
@@ -70,10 +71,22 @@ const ImageTransitionMaterial = {
     `
 };
 
-function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredIndex, data, position: initialPos, rotation: initialRot }) {
+// Preload function
+const preloadTextures = (data) => {
+    data.forEach(project => {
+        if (project.coverImage) useTexture.preload(project.coverImage);
+        if (project.details) {
+            project.details.forEach(d => {
+                if (d.image) useTexture.preload(d.image);
+            });
+        }
+    });
+};
+
+function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredIndex, data, position: initialPos, rotation: initialRot, scrollRef }) {
     const meshRef = useRef();
     const coverMeshRef = useRef();
-    const scroll = useScroll();
+    // const scroll = useScroll(); // Removed: using passed ref
     const isActive = activeId === index;
     const isAnyActive = activeId !== null;
     const isHovered = hoveredIndex === index;
@@ -85,9 +98,6 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
 
     // Image Handling
     const hasCoverImage = !!project.coverImage;
-    // We assume details[i].image exists if the user wants an image for that section.
-    // We should build a stable list of images for the "Slideshow". 
-    // Ideally, length matches project.details.length for 1-to-1 mapping.
     const detailImages = project.details ? project.details.map(d => d.image) : [];
 
     // Unique texture URLs to load
@@ -105,12 +115,9 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     const getTexture = (url) => {
         const idx = uniqueUrls.indexOf(url);
         if (idx !== -1) {
-            // If loadedTextures is an array, return the specific texture
             if (Array.isArray(loadedTextures)) return loadedTextures[idx];
-            // If loadedTextures is a single texture (only one unique URL), return it
             return loadedTextures;
         }
-        // Fallback if URL not found (shouldn't happen if uniqueUrls is correctly built)
         return null;
     };
 
@@ -136,6 +143,9 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     useFrame((state, delta) => {
         if (!meshRef.current) return;
 
+        // Get Scroll Offset securely
+        const scrollOffset = scrollRef?.current || 0;
+
         // Position Logic
         if (isActive) {
             // STICKY MODE (Scrollytelling)
@@ -145,20 +155,14 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
 
             // Dynamic Content Logic - Shader Update
             if (coverMeshRef.current) {
-                // If we have detail images, we drive the transition
-                // Map scroll offset (0..1) to Slideshow Index (0 .. details.length-1)
-
                 if (detailImages.length > 0) {
                     const totalSlides = detailImages.length;
-                    // Range: 0 to totalSlides - 1
-                    // Scroll=0 -> Index 0. Scroll=1 -> Index totalSlides-1.
-                    const slideProgress = scroll.offset * (totalSlides - 1);
+                    const slideProgress = scrollOffset * (totalSlides - 1);
 
                     let idx1 = Math.floor(slideProgress);
                     let idx2 = Math.min(idx1 + 1, totalSlides - 1);
                     let globalRatio = slideProgress - idx1;
 
-                    // Constrain for safety
                     if (idx1 < 0) idx1 = 0;
 
                     const url1 = detailImages[idx1] || project.coverImage;
@@ -173,27 +177,20 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                     shaderMaterial.uniforms.hasTexture.value = 1.0;
 
                 } else if (hasCoverImage) {
-                    // Static Cover
                     const tex = getTexture(project.coverImage);
                     shaderMaterial.uniforms.tex1.value = tex;
                     shaderMaterial.uniforms.tex2.value = tex;
                     shaderMaterial.uniforms.transition.value = 0;
                     shaderMaterial.uniforms.hasTexture.value = 1.0;
                 } else {
-                    // Fallback Color Animation
                     shaderMaterial.uniforms.hasTexture.value = 0.0;
-
                     const totalSections = project.details.length;
                     const sectionLength = 1 / totalSections;
                     const currentSection = Math.min(
-                        Math.floor(scroll.offset / sectionLength),
+                        Math.floor(scrollOffset / sectionLength),
                         totalSections - 1
                     );
                     const targetColor = new THREE.Color(project.details[currentSection]?.imageColor || '#b2bec3');
-                    // We can't easily damp a uniform color inside shader without holding state, 
-                    // but we can pass it uniform. 
-                    // Let's just lerp the shader uniform value if we want smooth, 
-                    // or just set it:
                     shaderMaterial.uniforms.color.value = targetColor;
                 }
             }
@@ -203,7 +200,6 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
             easing.damp3(meshRef.current.scale, [1, 1, 1], 0.4, delta);
         } else {
             // IDLE / STACK MODE
-            // Reset to Cover Image
             if (coverMeshRef.current) {
                 if (hasCoverImage) {
                     const tex = getTexture(project.coverImage);
@@ -242,11 +238,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     const pillPaddingX = isMobile ? 0.08 : 0.12;
     const pillPaddingY = isMobile ? 0.12 : 0.16;
 
-    useFrame((state, delta) => {
-        if (!meshRef.current) return;
-        // ... (rest of useFrame is unchanged, I need to match the start/end lines to avoid cutting code)
-        // Wait, replace_file_content replaces the whole block. I should only target the render block.
-    });
+    // ... useFrame for text bounds removed as not critical here ...
 
     return (
         <group
@@ -268,7 +260,6 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                 if (!isAnyActive) setHoveredIndex(null);
             }}
         >
-            {/* Card Body */}
             <RoundedBox args={dims.box} radius={0.05} smoothness={4}>
                 <meshPhysicalMaterial
                     color={isActive ? '#ffffff' : '#f5f5f5'}
@@ -279,14 +270,12 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                 />
             </RoundedBox>
 
-            {/* FULL BLEED Cover Plane - Shader Material */}
             <mesh ref={coverMeshRef} position={[0, 0.08, 0]} rotation={[-Math.PI / 2, 0, 0]} material={shaderMaterial}>
                 <planeGeometry args={dims.plane} />
             </mesh>
 
             {isHovered && (
                 <>
-                    {/* Shadow (On Card Surface) */}
                     <RoundedBox
                         args={[textBounds ? textBounds[0] + pillPaddingX : pillMinWidth, pillHeight, 0.001]}
                         position={[0.09, 0.1, 0.075]}
@@ -298,7 +287,6 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         <meshBasicMaterial color="#000000" transparent opacity={0.075} toneMapped={true} />
                     </RoundedBox>
 
-                    {/* Background Surface (Floating Pill) */}
                     <RoundedBox
                         args={[textBounds ? textBounds[0] + pillPaddingX : pillMinWidth, textBounds ? textBounds[1] + pillPaddingY : pillHeight, 0.01]}
                         position={[0, 0.2, 0]}
@@ -310,7 +298,6 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         <meshBasicMaterial color="#f7f5f3" toneMapped={false} />
                     </RoundedBox>
 
-                    {/* Text Label */}
                     <Text
                         position={[0, 0.21, 0]}
                         rotation={[-Math.PI / 2, 0, 0]}
@@ -340,30 +327,65 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     );
 }
 
-export default function ProjectStack({ activeId, setActiveId, data = [] }) {
-    const scroll = useScroll();
+export default function ProjectStack({ activeId, setActiveId, data = [], onLoad, scrollRef }) {
+    // const scroll = useScroll(); // Removed
     const groupRef = useRef();
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const GAP = 1.2;
+
+    // Mount Transition State
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        // Trigger mount animation
+        // setMounted(true); // Removed as per instruction
+
+        // Preload textures
+        preloadTextures(data);
+
+        // Trigger Ready State
+        if (onLoad) onLoad();
+    }, [data, onLoad]);
+
 
     // Use Ref to ensure useFrame always sees strict latest state
     const activeRef = useRef(activeId);
     activeRef.current = activeId;
 
+    // Calculate Start Position (Dynamic based on data length)
+    // Same logic as inside useFrame to ensure consistency
+    const endY = 0;
+    const topCardY = (data.length - 1) * GAP;
+    const startY = -topCardY - 1.5;
+
     useFrame((state, delta) => {
         if (groupRef.current) {
+            // Entrance Animation: Scale up smoothly when mounted
+            // const targetScale = mounted ? 1 : 0.9; // Removed as per instruction
+            // Only apply this scale damp if we are NOT in active mode
+            // (Active mode has its own scale logic in ProjectCard, but the group itself usually stays at 1)
+            // Actually, the group scale is separate from card scale.
+            // Let's just animate group scale for the entrance.
+            // easing.damp3(groupRef.current.scale, [targetScale, targetScale, targetScale], 0.5, delta); // Removed as per instruction
+
+            // Fade In Animation using simple lerp on group opacity (if possible) or position
+            // Since we can't easily set group opacity for all children, we can animate scale or use a transitionGroup
+            // A simple scale-up from 0.9 is nice.
+
+            // NOTE: Group opacity doesn't cascade to children in ThreeJS by default without custom logic.
+            // But we can animate y-position slightly for an 'entrance' effect.
+
             if (activeRef.current === null) {
                 // Stack Scroll Logic
-                // Dynamic Range Calculation (Required for Navigation Mapping)
-                // Index 0 (Bottom Card) is at Y=0. Index N (Top Card) is at Y = (N-1)*GAP.
-
-                const endY = 0;
-                // Start Position: Top Card near Center/Top
-                const topCardY = (data.length - 1) * GAP;
-                const startY = -topCardY - 1.5;
+                // We use the same endY and startY calculated above
 
                 // Interpolate
-                const targetY = startY + (scroll.offset * (endY - startY));
+                const scrollOffset = scrollRef?.current || 0;
+                const targetY = startY + (scrollOffset * (endY - startY));
+
+                // Entrance Animation override
+                // If we want a smooth fade in, we might need a simpler approach:
+                // Just let the suspended component appear. Since we preloaded, it should be faster.
+                // Or: Initial Y could be lower and damp to target.
 
                 easing.damp3(groupRef.current.position, [0, targetY, 0], 0.2, delta);
             } else {
@@ -374,7 +396,13 @@ export default function ProjectStack({ activeId, setActiveId, data = [] }) {
     });
 
     return (
-        <group ref={groupRef} position={[0, -8, 0]}>
+        <group ref={groupRef} position={[0, startY, 0]}>
+            {/* Preload Font to prevent Suspense fallback on first hover */}
+            <Text
+                font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
+                visible={false}
+                text="preload"
+            />
             {data.map((project, i) => (
                 <ProjectCard
                     key={i}
@@ -386,6 +414,7 @@ export default function ProjectStack({ activeId, setActiveId, data = [] }) {
                     data={data}
                     position={[0, i * GAP, 0]}
                     rotation={[0.4, (i % 2 === 0 ? 0.1 : -0.1), 0]}
+                    scrollRef={scrollRef}
                 />
             ))}
         </group>
