@@ -63,7 +63,7 @@ export function ProjectNavigationUI({ data, activeIndex, onSelect, isProjectOpen
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-end',
-            gap: '4px', // Slightly larger gap for vertical timeline look
+            gap: '12px', // Slightly larger gap for vertical timeline look
             zIndex: 100,
             pointerEvents: 'none'
         }}>
@@ -105,37 +105,44 @@ const NavPill = ({ title, type, isActive, onClick, isProjectOpen }) => {
                 cursor: 'pointer',
                 pointerEvents: 'auto',
                 position: 'relative',
-                transition: 'opacity 0.3s'
+                transition: 'opacity 0.3s',
+                zIndex: hover ? 1000 : 1 // Bring hovered item to front
             }}
         >
             {/* Project Title & Type Tooltip */}
             <div style={{
                 position: 'absolute',
-                right: '50px',
+                right: '45px',
                 opacity: activeOrHover ? 1 : 0,
                 transform: activeOrHover ? 'translateX(0)' : 'translateX(10px)',
                 transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
                 textAlign: 'right',
                 pointerEvents: 'none',
+                // Restored Box (Smaller & Seamless)
+                padding: '6px 12px',
+                borderRadius: '12px',
+                background: 'rgba(255, 255, 255, 0.4)', // More transparent
+                backdropFilter: 'blur(2px)', // Stronger blur
+                WebkitBackdropFilter: 'blur(2px)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                whiteSpace: 'nowrap'
             }}>
                 <div style={{
-                    whiteSpace: 'nowrap',
                     color: '#000',
                     fontFamily: 'var(--font-sans)',
                     fontWeight: 700,
                     fontSize: '0.9rem',
                     letterSpacing: '-0.01em',
-                    textShadow: '0 0 12px rgba(255,255,255,0.8)'
                 }}>
                     {title}
                 </div>
                 <div style={{
-                    whiteSpace: 'nowrap',
                     color: 'rgba(0,0,0,0.5)',
                     fontFamily: 'var(--font-sans)',
                     fontWeight: 500,
                     fontSize: '0.75rem',
-                    marginTop: '-2px'
+                    marginTop: '-2px',
                 }}>
                     {type}
                 </div>

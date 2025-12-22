@@ -45,75 +45,42 @@ const ScrollSync = ({ activeId }) => {
 
 const PROJECT_DATA = [
     {
-        title: "Finance Dashboard",
-        type: "UI Interface",
-        layout: "desktop", // Standard 4:3
-        desc: "A clean, modern dashboard for tracking personal expenses and investments.",
-        stack: ["Figma", "React", "D3.js"],
-        details: [
-            { title: "The Problem", text: "Users struggled to visualize their spending habits across multiple accounts, leading to poor financial decisions.", imageColor: "#81ecec" },
-            { title: "The Solution", text: "We unified all data streams into a single, intuitive dashboard with real-time categorization and budget tracking.", imageColor: "#00cec9" },
-            { title: "Key Features", text: "Interactive charts, drag-and-drop budgeting, and AI-powered savings recommendations.", imageColor: "#74b9ff" }
-        ]
-    },
-    {
-        title: "Travel App Mobile",
-        type: "UX Research",
-        layout: "mobile", // Tall 9:16
-        desc: "User journey mapping and high-fidelity prototyping for a travel booking app.",
-        stack: ["UserTesting", "Figma", "Protopie"],
-        details: [
-            { title: "User Research", text: "Conducted interviews with 20 frequent travelers to identify pain points in current booking flows.", imageColor: "#fd79a8" },
-            { title: "Wireframing", text: "Developed low-fidelity wireframes to test navigation structures and information hierarchy.", imageColor: "#e84393" },
-            { title: "Prototyping", text: "Created a high-fidelity interactive prototype demonstrating the seamless booking experience.", imageColor: "#fab1a0" }
-        ]
-    },
-    {
-        title: "Brand Identity",
-        type: "Graphic Design",
-        layout: "square", // 1:1
-        desc: "Complete visual identity including logo, typography, and guidelines.",
-        stack: ["Illustrator", "Photoshop"],
-        details: [
-            { title: "Concept", text: "Explored themes of modernization and reliability to reflect the client's core values.", imageColor: "#a29bfe" },
-            { title: "Typography", text: "Selected a custom serif typeface to convey elegance and authority.", imageColor: "#6c5ce7" },
-            { title: "Application", text: "Applied the identity across business cards, digital assets, and merchandise.", imageColor: "#dfe6e9" }
-        ]
-    },
-    {
-        title: "E-Commerce Platform",
-        type: "UI System",
+        title: "Smartagent",
+        type: "Desktop App",
         layout: "desktop",
-        desc: "Scalable component library and page layouts for a fashion retailer.",
-        stack: ["Storybook", "React", "Sass"],
+        desc: "A smart desktop application for agents.",
+        stack: ["React", "Electron", "Node.js"],
+        coverImage: "/Smartagent photos/WhatsApp Image 2025-12-16 at 10.30.53.jpeg",
         details: [
-            { title: "Design System", text: "Built a atomic design system to ensure consistency across the platform.", imageColor: "#fab1a0" },
-            { title: "Components", text: "Developed reusable components like buttons, inputs, and product cards.", imageColor: "#ff7675" },
-            { title: "Integration", text: "Integrated components into the main application, improving development speed by 40%.", imageColor: "#fdcb6e" }
+            { title: "Smartagent AI", text: "Advanced AI integration for smarter agents.", imageColor: "#81ecec", image: "/Smartagent photos/WhatsApp Image 2025-12-16 at 10.30.53.jpeg" },
+            { title: "Workflow", text: "Streamlined workflow automation.", imageColor: "#00cec9", image: "/Smartagent photos/WhatsApp Image 2025-12-16 at 10.31.05.jpeg" },
+            { title: "Analytics", text: "Real-time analytics and reporting.", imageColor: "#74b9ff", image: "/Smartagent photos/WhatsApp Image 2025-12-16 at 10.31.57.jpeg" }
         ]
     },
     {
-        title: "Healthcare Portal",
-        type: "UX Design",
-        layout: "a4_horizontal",
-        desc: "Accessibility-focused patient portal for managing records and appointments.",
-        stack: ["WCAG", "Sketch", "InVision"],
+        title: "Tezi",
+        type: "Desktop App",
+        layout: "desktop",
+        desc: "A powerful desktop application for productivity.",
+        stack: ["Rust", "Tauri", "React"],
+        coverImage: "/Tezi photos/WhatsApp Image 2025-12-16 at 10.44.04.jpeg",
         details: [
-            { title: "Accessibility", text: "Ensured WCAG 2.1 AA compliance for users with visual impairments.", imageColor: "#55efc4" },
-            { title: "User Flow", text: "Streamlined the appointment booking process to reduce steps by 50%.", imageColor: "#00b894" },
-            { title: "Testing", text: "Validated designs through usability testing with elderly patients.", imageColor: "#81ecec" }
+            { title: "Speed", text: "Lightning fast performance.", imageColor: "#fd79a8", image: "/Tezi photos/WhatsApp Image 2025-12-16 at 10.44.04.jpeg" },
+            { title: "Security", text: "Enterprise grade security.", imageColor: "#e84393", image: "/Tezi photos/WhatsApp Image 2025-12-16 at 10.46.06.jpeg" },
+            { title: "Integration", text: "Seamless integration with existing tools.", imageColor: "#fab1a0", image: "/Tezi photos/WhatsApp Image 2025-12-16 at 10.46.21.jpeg" }
         ]
     },
     {
-        title: "Event Posters",
-        type: "Graphic Design",
-        layout: "a4_vertical",
-        desc: "Series of typographic posters for a tech conference.",
-        stack: ["Indesign", "After Effects"],
+        title: "Fork it",
+        type: "Mobile App",
+        layout: "mobile",
+        desc: "A collaborative social food discovery platform.",
+        stack: ["React Native", "Firebase", "Google Maps API"],
+        coverImage: "/Fork it Photos/WhatsApp Image 2025-12-20 at 19.41.31.jpeg",
         details: [
-            { title: "Visual Language", text: "Developed a bold, typographic visual language inspired by brutalism.", imageColor: "#ffeaa7" },
-            { title: "Animation", text: "Created motion posters for social media to drive engagement.", imageColor: "#fdcb6e" },
-            { title: "Print", text: "Managed print production for high-quality large format displays.", imageColor: "#e17055" }
+            { title: "Discovery", text: "Find the best spots near you.", imageColor: "#fab1a0", image: "/Fork it Photos/WhatsApp Image 2025-12-20 at 19.41.31.jpeg" },
+            { title: "Social", text: "Share and collaborate on food lists.", imageColor: "#ff7675", image: "/Fork it Photos/WhatsApp Image 2025-12-20 at 21.34.45.jpeg" },
+            { title: "Maps", text: "Interactive map view for foodies.", imageColor: "#fd79a8", image: "/Fork it Photos/WhatsApp Image 2025-12-20 at 21.39.28.jpeg" }
         ]
     }
 ];
