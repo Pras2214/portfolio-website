@@ -7,14 +7,13 @@ import * as THREE from 'three';
 
 // Card Dimensions Config
 const CARD_DIMENSIONS = {
-    desktop: { box: [4.5, 0.15, 3.2], plane: [4.45, 3.15], textWidth: 4 },
-    mobile: { box: [1.5, 0.15, 2.95], plane: [1.5, 2.95], textWidth: 1.4 },
-    square: { box: [3.5, 0.15, 3.5], plane: [3.45, 3.45], textWidth: 3.2 },
-    a4_vertical: { box: [2.5, 0.15, 3.53], plane: [2.45, 3.48], textWidth: 2.8 },
-    a4_horizontal: { box: [3.53, 0.15, 2.5], plane: [3.48, 2.45], textWidth: 2.8 }
+    desktop: { box: [5.6, 0.19, 4.0], plane: [5.55, 3.95], textWidth: 5 },
+    mobile: { box: [1.9, 0.19, 3.7], plane: [1.88, 3.68], textWidth: 1.8 },
+    square: { box: [4.4, 0.19, 4.4], plane: [4.35, 4.35], textWidth: 4.0 },
+    a4_vertical: { box: [3.1, 0.19, 4.4], plane: [3.05, 4.35], textWidth: 3.5 },
+    a4_horizontal: { box: [4.4, 0.19, 3.1], plane: [4.35, 3.05], textWidth: 3.5 }
 };
 
-// ... Shader Material (no changes) ...
 const ImageTransitionMaterial = {
     uniforms: {
         tex1: { value: null },
@@ -98,6 +97,10 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
 
     // Image Handling
     const hasCoverImage = !!project.coverImage;
+
+    // Random idle rotation speed and direction
+    const randomSpeed = useMemo(() => (Math.random() * 0.2 + 0.1) * (Math.random() > 0.5 ? 1 : -1), []);
+
     const detailImages = project.details ? project.details.map(d => d.image) : [];
 
     // Unique texture URLs to load
@@ -151,7 +154,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
             // STICKY MODE (Scrollytelling)
             easing.damp3(meshRef.current.position, [3.5, 0, 0], 0.4, delta);
             easing.dampE(meshRef.current.rotation, [Math.PI / 2, 0, 0], 0.4, delta);
-            easing.damp3(meshRef.current.scale, [2, 2, 2], 0.4, delta);
+            easing.damp3(meshRef.current.scale, [1.45, 1.45, 1.45], 0.4, delta);
 
             // Dynamic Content Logic - Shader Update
             if (coverMeshRef.current) {
@@ -225,29 +228,45 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
             easing.damp3(meshRef.current.scale, [targetScale, targetScale, targetScale], 0.3, delta);
 
             const targetRotX = isHovered ? 1.3 : initialRot[0];
-            const targetRotY = isHovered ? 0 : initialRot[1];
             const targetRotZ = isHovered ? 0 : initialRot[2];
-            easing.dampE(meshRef.current.rotation, [targetRotX, targetRotY, targetRotZ], 0.3, delta);
+
+            if (hoveredIndex === null) {
+                // Global Idle -> Independent Spin
+                // We damp X and Z to keep them stable while Y spins freely
+                easing.damp(meshRef.current.rotation, 'x', targetRotX, 0.3, delta);
+                easing.damp(meshRef.current.rotation, 'z', targetRotZ, 0.3, delta);
+                meshRef.current.rotation.y += delta * randomSpeed;
+            } else {
+                // Focus Mode -> Stabilize
+                // Damp all axes to their target positions (reset Y to initial or flat)
+                const targetRotY = isHovered ? 0 : initialRot[1];
+                easing.dampE(meshRef.current.rotation, [targetRotX, targetRotY, targetRotZ], 0.3, delta);
+            }
         }
     });
 
     const isMobile = layout === 'mobile';
-    const pillFontSize = isMobile ? 0.18 : 0.25;
-    const pillMinWidth = isMobile ? 0.8 : 1.6;
-    const pillHeight = isMobile ? 0.4 : 0.6;
-    const pillPaddingX = isMobile ? 0.08 : 0.12;
-    const pillPaddingY = isMobile ? 0.12 : 0.16;
+    const pillFontSize = isMobile ? 0.22 : 0.30;
+    const baseMinWidth = isMobile ? 1.5 : 2.5; // Dynamic min width
+    const pillMinWidth = baseMinWidth; // Fallback
+    const pillHeight = isMobile ? 0.65 : 0.75; // Increased mobile height for better fit
+    const pillPaddingX = isMobile ? 0.1 : 0.15;
+    const pillPaddingY = isMobile ? 0.15 : 0.2;
 
     // ... useFrame for text bounds removed as not critical here ...
 
     // Dynamic Font Size Calculation to fit long names in the box
-    const MAX_CHAR_BEFORE_SHRINK = 12; // Start shrinking earlier to be safe
+    const MAX_CHAR_BEFORE_SHRINK = isMobile ? 7 : 12;
     const titleLength = project.title ? project.title.length : 10;
-    // We add a slight buffer to the divisor to make the shrink curve gentler but effective
     const fontScale = titleLength > MAX_CHAR_BEFORE_SHRINK ? (MAX_CHAR_BEFORE_SHRINK / titleLength) : 1;
     const finalFontSize = pillFontSize * fontScale;
-    const minFontSize = 0.14; // Prevent it from getting unreadably small
+    const minFontSize = isMobile ? 0.13 : 0.14;
     const dynamicFontSize = Math.max(finalFontSize, minFontSize);
+
+    // Dynamic Vertical Spacing
+    const titleOffsetY = isMobile ? 0.08 : 0.12;
+    const typeOffsetY = isMobile ? -0.10 : -0.13;
+    const clickHintY = isMobile ? -0.22 : -0.26;
 
     return (
         <group
@@ -256,7 +275,9 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
             rotation={initialRot}
             onClick={(e) => {
                 e.stopPropagation();
-                if (!isActive && !isAnyActive) {
+                if (isActive) {
+                    setActiveId(null); // Close if already active
+                } else if (!isAnyActive) {
                     setActiveId(index);
                     setHoveredIndex(null);
                 }
@@ -279,15 +300,16 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                 />
             </RoundedBox>
 
-            <mesh ref={coverMeshRef} position={[0, 0.08, 0]} rotation={[-Math.PI / 2, 0, 0]} material={shaderMaterial}>
+            <mesh ref={coverMeshRef} position={[0, 0.1001, 0]} rotation={[-Math.PI / 2, 0, 0]} material={shaderMaterial}>
                 <planeGeometry args={dims.plane} />
             </mesh>
 
             {isHovered && (
                 <>
+                    {/* Shadow/Backing for Text - SLEEK */}
                     <RoundedBox
-                        args={[textBounds ? textBounds[0] + pillPaddingX : pillMinWidth, pillHeight, 0.001]}
-                        position={[0.09, 0.1, 0.075]}
+                        args={[textBounds ? Math.max(textBounds[0], baseMinWidth) + pillPaddingX : baseMinWidth, pillHeight * 1.1, 0.001]}
+                        position={[0.09, 0.2, 0.075]} // Slightly elevated
                         rotation={[-Math.PI / 2, 0, 0]}
                         radius={0.04}
                         smoothness={4}
@@ -296,9 +318,10 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         <meshBasicMaterial color="#000000" transparent opacity={0.075} toneMapped={true} />
                     </RoundedBox>
 
+                    {/* Main White Pill - SLEEK */}
                     <RoundedBox
-                        args={[textBounds ? textBounds[0] + pillPaddingX : pillMinWidth, textBounds ? textBounds[1] + pillPaddingY : pillHeight, 0.01]}
-                        position={[0, 0.2, 0]}
+                        args={[textBounds ? Math.max(textBounds[0], baseMinWidth) + pillPaddingX : baseMinWidth, pillHeight * 1.1, 0.01]}
+                        position={[0, 0.3, 0]} // Slightly elevated
                         rotation={[-Math.PI / 2, 0, 0]}
                         radius={0.075}
                         smoothness={4}
@@ -307,29 +330,56 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         <meshBasicMaterial color="#f7f5f3" toneMapped={false} />
                     </RoundedBox>
 
-                    <Text
-                        position={[0, 0.21, 0]}
-                        rotation={[-Math.PI / 2, 0, 0]}
-                        fontSize={dynamicFontSize}
-                        color="#1a1a1a"
-                        fontStyle="italic"
-                        font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
-                        anchorX="center"
-                        anchorY="middle"
-                        outlineWidth={0.0008}
-                        raycast={() => null}
-                        onSync={(troika) => {
-                            if (troika.boundingBox) {
-                                const width = troika.boundingBox.max.x - troika.boundingBox.min.x;
-                                const height = troika.boundingBox.max.y - troika.boundingBox.min.y;
-                                if (!textBounds || Math.abs(textBounds[0] - width) > 0.02 || Math.abs(textBounds[1] - height) > 0.02) {
-                                    setTextBounds([width, height]);
+                    <group position={[0, 0.31, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                        {/* Title - Centered */}
+                        <Text
+                            position={[0, titleOffsetY, 0]}
+                            fontSize={dynamicFontSize}
+                            color="#1a1a1a"
+                            fontStyle="italic"
+                            font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
+                            anchorX="center"
+                            anchorY="middle"
+                            outlineWidth={0.0008}
+                            raycast={() => null}
+                            onSync={(troika) => {
+                                if (troika.boundingBox) {
+                                    const width = troika.boundingBox.max.x - troika.boundingBox.min.x;
+                                    if (!textBounds || Math.abs(textBounds[0] - width) > 0.02) {
+                                        setTextBounds([width, 0]);
+                                    }
                                 }
-                            }
-                        }}
-                    >
-                        {project.title}
-                    </Text>
+                            }}
+                        >
+                            {project.title}
+                        </Text>
+
+                        {/* Project Type - Subtle & Tucked */}
+                        <Text
+                            position={[0, typeOffsetY, 0]}
+                            fontSize={0.09}
+                            color="#888888" // Softer grey
+                            font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
+                            anchorX="center"
+                            anchorY="middle"
+                            letterSpacing={0.05}
+                            raycast={() => null}
+                        >
+                            {(project.type || "Project").toUpperCase()}
+                        </Text>
+                        <Text
+                            position={[0, clickHintY, 0]} // Floating well below
+                            fontSize={0.07}
+                            color="#555555" // Dark Grey for visibility
+                            fontStyle="italic"
+                            font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
+                            anchorX="center"
+                            anchorY="middle"
+                            raycast={() => null}
+                        >
+                            (Click to explore)
+                        </Text>
+                    </group>
                 </>
             )}
         </group>
@@ -340,7 +390,7 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
     // const scroll = useScroll(); // Removed
     const groupRef = useRef();
     const [hoveredIndex, setHoveredIndex] = useState(null);
-    const GAP = 1.2;
+    const GAP = 1.5;
 
     // Mount Transition State
     const [mounted, setMounted] = useState(false);
@@ -401,6 +451,8 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
                 // Active Logic -> Reset Group to Center
                 easing.damp3(groupRef.current.position, [0, 0, 0], 0.5, delta);
             }
+
+            // Idle Rotation Logic Removed (Moved to ProjectCard for individual control)
         }
     });
 
