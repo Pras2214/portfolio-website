@@ -16,11 +16,12 @@ const ScrollBridge = ({ scrollRef }) => {
     return null;
 };
 
-const HtmlScrollSync = ({ htmlRef }) => {
+const HtmlScrollSync = ({ htmlRef, shouldSyncRef }) => {
     const scroll = useScroll(); // This works because it will be INSIDE the Stack ScrollControls
 
     useFrame(() => {
-        if (htmlRef.current && scroll) {
+        // Guard against race condition where this runs after component is effectively unmounted or state changed
+        if (htmlRef.current && scroll && (!shouldSyncRef || shouldSyncRef.current)) {
             // Scroll offset goes from 0 to 1
             // We want to move the text UP as we scroll down.
             // Adjust the multiplier to control speed.
@@ -106,7 +107,7 @@ const PROJECT_DATA = [
         details: [
             {
                 title: "Overview",
-                text: "An intensive weekend ideathon where aspiring entrepreneurs pitch ideas, form teams, and work with mentors to validate business models.",
+                text: "This is a report on an intensive weekend ideathon where aspiring entrepreneurs pitch ideas, form teams, and work with mentors to validate business models.",
                 stack: ["Photoshop", "Canva"],
                 imageColor: "#ffeaa7",
                 image: "/Startup weekend photos/Cover-Image.jpeg"
@@ -516,7 +517,7 @@ const PROJECT_DATA = [
         details: [
             {
                 title: "Overview",
-                text: "Facilitates direct B2B trade by allowing sellers to create personal marketplaces and buyers to negotiate orders via AI support.",
+                text: "Facilitates direct B2B trade by allowing sellers to create personal storefronts and buyers to negotiate orders via AI support.",
                 stack: ["Figma", "React", "Material UI", "Shadcn", "Framer-motion", "React PDF"],
                 imageColor: "#fd79a8",
                 image: "/Tezi Photos/Cover-image-and-Login-screen.png"
@@ -583,6 +584,12 @@ const PROJECT_DATA = [
 const PortfolioPage = () => {
     const [activeId, setActiveId] = useState(null);
     const activeProject = activeId !== null ? PROJECT_DATA[activeId] : null;
+
+    // Guard ref to stop HtmlScrollSync from overwriting styles when we switch to project mode
+    // This prevents the race condition where a frame fires just before unmount, setting opacity back to 1
+    const shouldSyncRef = useRef(activeId === null);
+    shouldSyncRef.current = activeId === null;
+
     const lastActiveProject = useRef(null);
     if (activeProject) {
         lastActiveProject.current = activeProject;
@@ -700,7 +707,7 @@ const PortfolioPage = () => {
                             damping={0.2}
                         >
                             <ScrollBridge scrollRef={scrollRef} />
-                            <HtmlScrollSync htmlRef={titleRef} />
+                            <HtmlScrollSync htmlRef={titleRef} shouldSyncRef={shouldSyncRef} />
 
                             {/* Navigation Logic */}
                             <ProjectNavigationLogic

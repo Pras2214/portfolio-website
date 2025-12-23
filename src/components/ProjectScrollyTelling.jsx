@@ -69,7 +69,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                 ref={indicatorRef}
                                 style={{
                                     position: 'absolute',
-                                    bottom: '10%',
+                                    bottom: '0%',
                                     left: '50%',
                                     transform: 'translateX(-50%)',
                                     textAlign: 'center',
