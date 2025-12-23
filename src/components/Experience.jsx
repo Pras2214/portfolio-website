@@ -54,17 +54,9 @@ const experiences = [
 const Experience = () => {
     return (
         <div className="experience-section animate-reveal delay-3">
-            <div className="experience-header" style={{ display: 'block', textAlign: 'center', marginBottom: '3rem' }}>
-                <h1 className="experience-title" style={{
-                    fontFamily: 'var(--font-serif)',
-                    fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
-                    fontStyle: 'italic',
-                    marginBottom: '1rem',
-                    textTransform: 'none',
-                    letterSpacing: 'normal',
-                    color: 'var(--text-color)'
-                }}>Experience</h1>
-                <p style={{ color: 'var(--subtle-color)', fontSize: '1rem' }}>My professional journey.</p>
+            <div className="experience-header">
+                <h1 className="experience-title">The Journey.</h1>
+                <p className="experience-subtitle">My professional timeline.</p>
             </div>
 
             <div className="timeline">
@@ -72,14 +64,17 @@ const Experience = () => {
                     <div key={exp.id} className="timeline-item">
                         <div className="timeline-marker"></div>
                         <div className="timeline-content">
-                            <div>
+                            <div className="timeline-header-group">
                                 <h3 className="timeline-role">{exp.role}</h3>
-                                <div className="timeline-company">{exp.company}</div>
-                                <div className="timeline-date">{exp.date}</div>
+                                <div className="timeline-meta">
+                                    <span className="timeline-company">{exp.company}</span>
+                                    <span className="timeline-dot">•</span>
+                                    <span className="timeline-date">{exp.date}</span>
+                                </div>
                             </div>
                             <ul className="timeline-description">
                                 {exp.description.map((item, idx) => (
-                                    <li key={idx}>— {item}</li>
+                                    <li key={idx}>{item}</li>
                                 ))}
                             </ul>
                         </div>

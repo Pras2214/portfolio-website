@@ -3,36 +3,48 @@ import { Link } from 'react-router-dom';
 import './SignalList.css';
 
 const SignalList = ({ items }) => {
-    const [expandedId, setExpandedId] = useState(null);
+    const [stickyExpandedIds, setStickyExpandedIds] = useState([]);
+    const [hoveredId, setHoveredId] = useState(null);
 
     const handleItemClick = (id) => {
-        setExpandedId(expandedId === id ? null : id);
+        setStickyExpandedIds(prev =>
+            prev.includes(id)
+                ? prev.filter(itemId => itemId !== id)
+                : [...prev, id]
+        );
     };
 
     return (
         <div className="signal-list">
-            {items.map((item, index) => (
-                <div
-                    key={item.id}
-                    className={`signal-item ${expandedId === item.id ? 'expanded' : ''}`}
-                    onClick={() => handleItemClick(item.id)}
-                >
-                    <div className="signal-header">
-                        <span className="signal-number">{String(index + 1).padStart(2, '0')}</span>
-                        <div className="signal-content-wrapper">
-                            <span className="signal-title">{item.title}</span>
+            {items.map((item, index) => {
+                const isExpanded = stickyExpandedIds.includes(item.id) || hoveredId === item.id;
+
+                return (
+                    <div
+                        key={item.id}
+                        className={`signal-item ${isExpanded ? 'expanded' : ''}`}
+                        onClick={() => handleItemClick(item.id)}
+                        onMouseEnter={() => setHoveredId(item.id)}
+                        onMouseLeave={() => setHoveredId(null)}
+                    >
+                        <div className="signal-header">
+                            <span className="signal-number">{String(index + 1).padStart(2, '0')}</span>
+                            <div className="signal-content-wrapper">
+                                <span className="signal-title">{item.title}</span>
+                                <span className="signal-arrow">›</span>
+                            </div>
+                        </div>
+
+                        <div className={`signal-details-wrapper ${isExpanded ? 'active' : ''}`}>
+                            <div className="signal-details">
+                                <p>
+                                    {item.content}
+                                </p>
+                            </div>
                         </div>
                     </div>
-
-                    {expandedId === item.id && (
-                        <div className="signal-details animate-reveal">
-                            <p>
-                                {item.content}
-                            </p>
-                        </div>
-                    )}
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };

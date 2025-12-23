@@ -642,7 +642,7 @@ const PortfolioPage = () => {
                     textTransform: 'none',
                     letterSpacing: 'normal',
                     color: 'var(--text-color)'
-                }}>Work</h1>
+                }}>The Work.</h1>
                 <p style={{
                     color: 'var(--subtle-color)',
                     fontSize: '1.1rem',
@@ -650,7 +650,7 @@ const PortfolioPage = () => {
                     fontFamily: 'var(--font-sans)',
                     marginBottom: 0
                 }}>
-                    Selected UI/UX and Graphic Design projects.<br />
+                    A curation of software architecture and visual systems.<br />
                     <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Scroll to explore. Click to view.</span>
                 </p>
             </div>
@@ -757,7 +757,7 @@ const PortfolioPage = () => {
                     onClick={() => setActiveId(null)}
                     style={{
                         position: 'fixed',
-                        top: '120px',
+                        top: '100px',
                         left: '30px',
                         background: 'transparent',
                         color: 'var(--text-color)',

@@ -9,8 +9,8 @@ const signals = [
     },
     {
         id: 2,
-        title: "\"Boring\" technology makes the most money.",
-        content: "In a world obsessed with the newest JavaScript framework, I bet on \"boring.\" Give me a solid SQL database and a server-side language that has survived a decade. I’ll take that over a fragile new stack that breaks every update. My goal isn't to use the coolest tech. It's to build software that actually works."
+        title: '"Boring" businesses make the most money.',
+        content: 'While everyone chases the next AI unicorn, I look for the unsexy problems. B2B marketplaces, financial services, internal operations. These industries don\'t run on hype; they run on efficiency. I prefer solving an expensive, boring problem that generates real revenue over chasing vanity metrics on a pitch deck. Real innovation often looks like fixing a messy workflow, not reinventing the wheel.'
     },
     {
         id: 3,
@@ -82,32 +82,66 @@ const signals = [
 const Home = () => {
     return (
         <div>
-            <div style={{ marginBottom: 'var(--spacing-lg)', padding: '4rem 0' }}>
+            <div style={{ marginBottom: 'var(--spacing-lg)', padding: '0 0 4rem' }}>
                 <h1 className="heading-serif animate-reveal delay-1" style={{
                     fontSize: 'clamp(3rem, 5vw, 4.5rem)',
                     lineHeight: '1.1',
-                    fontStyle: 'italic',
-                    maxWidth: '20ch',
+                    maxWidth: '15ch',
                     margin: '0 auto',
                     textAlign: 'center'
                 }}>
-                    "Creativity is a wild mind and a disciplined eye."
+                    The Blueprint.
                 </h1>
                 <p className="animate-reveal delay-1" style={{
                     textAlign: 'center',
-                    marginTop: '1rem',
+                    marginTop: '1.5rem',
                     fontFamily: 'var(--font-sans)',
                     color: 'var(--subtle-color)',
-                    fontSize: '1rem',
-                    fontStyle: 'normal'
-                }}>— Dorothy Parker</p>
+                    fontSize: '1.1rem',
+                    fontStyle: 'normal',
+                    maxWidth: '600px',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    lineHeight: '1.6'
+                }}>
+                    A collection of traits, principles, and mental models that drive my decisions. These aren't just random quotes, but the core signals of who I am.
+                </p>
             </div>
 
             <div className="animate-reveal delay-2" style={{ borderTop: '1px solid #eaeaea', paddingTop: 'var(--spacing-sm)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--spacing-md)' }}>
-                    <h2 className="text-uppercase" style={{ fontSize: '0.8rem', color: 'var(--subtle-color)', letterSpacing: '0.1em' }}>Get to know me</h2>
-                </div>
                 <SignalList items={signals} />
+            </div>
+
+            <div className="animate-reveal delay-3" style={{
+                marginTop: '4rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                opacity: 0.5,
+                transition: 'opacity 0.3s ease'
+            }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.5'}
+            >
+                <div style={{ width: '1px', height: '40px', background: 'var(--text-color)', marginBottom: '1.5rem' }}></div>
+                <h2 style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1.5rem',
+                    textAlign: 'center',
+                    fontStyle: 'italic',
+                    maxWidth: '25ch',
+                    lineHeight: '1.4'
+                }}>
+                    "Creativity is a wild mind and a disciplined eye."
+                </h2>
+                <p style={{
+                    marginTop: '1rem',
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.9rem',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase'
+                }}>— Dorothy Parker</p>
             </div>
         </div>
     );

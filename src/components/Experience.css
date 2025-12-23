@@ -6,39 +6,48 @@
 }
 
 .experience-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 3rem;
+    text-align: center;
+    margin-bottom: 4rem;
 }
 
 .experience-title {
-    font-size: 0.8rem;
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-style: italic;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    line-height: 1.1;
+    margin-top: 0;
+}
+
+.experience-subtitle {
     color: var(--subtle-color);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-size: 1.1rem;
+    font-family: var(--font-sans);
 }
 
 .timeline {
     position: relative;
-    padding-left: 20px;
+    padding-left: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 /* The vertical line */
 .timeline::before {
     content: '';
     position: absolute;
-    top: 10px;
+    top: 15px;
     bottom: 0;
     left: 7px;
     width: 1px;
-    background: #eaeaea;
+    background: linear-gradient(to bottom, #eaeaea 0%, #eaeaea 90%, transparent 100%);
 }
 
 .timeline-item {
     position: relative;
-    padding-left: 30px;
-    padding-bottom: 3rem;
+    padding-left: 40px;
+    padding-bottom: 4rem;
 }
 
 .timeline-item:last-child {
@@ -49,70 +58,108 @@
 .timeline-marker {
     position: absolute;
     left: 4px;
-    top: 8px;
-    /* Align with title */
+    /* Centered on the 1px line (left:7px). Line is at 7px. Marker width 6px. 7 - 3 + 0.5 = 4.5. Let's align. */
+    left: 4px;
+    top: 10px;
     width: 7px;
     height: 7px;
-    border-radius: 50%;
-    background-color: var(--text-color);
-    border: 2px solid var(--bg-color);
-    /* Cutout effect if needed, but solid looks better on line */
-    z-index: 1;
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    border-radius: 0;
+    /* Square */
+    background-color: var(--subtle-color);
+    border: none;
+    z-index: 2;
+    transition: all 0.3s ease;
 }
 
 .timeline-item:hover .timeline-marker {
-    transform: scale(1.5);
     background-color: var(--text-color);
-    /* Or accent color from palette if we want to be fancy */
+    transform: scale(1.2);
 }
 
 .timeline-content {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.timeline-item:hover .timeline-content {
+    transform: translateX(5px);
+}
+
+.timeline-header-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .timeline-role {
     font-family: var(--font-serif);
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 500;
     margin: 0;
     line-height: 1.2;
+    transition: color 0.2s ease;
+}
+
+.timeline-item:hover .timeline-role {
+    color: var(--accent-color);
+}
+
+.timeline-meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--subtle-color);
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    flex-wrap: wrap;
 }
 
 .timeline-company {
-    font-family: var(--font-sans);
-    font-size: 1rem;
     font-weight: 500;
     color: var(--text-color);
 }
 
+.timeline-dot {
+    opacity: 0.5;
+    font-size: 0.8em;
+}
+
 .timeline-date {
-    font-size: 0.85rem;
-    color: var(--subtle-color);
-    margin-bottom: 0.5rem;
     font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
 }
 
 .timeline-description {
     list-style: none;
     padding: 0;
-    margin: 0.5rem 0 0 0;
+    margin: 0;
 }
 
 .timeline-description li {
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: var(--subtle-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     line-height: 1.6;
-    position: relative;
-    padding-left: 0;
+    padding-left: 1rem;
+    border-left: 2px solid #eee;
+    /* Simple line indicator */
 }
+
+/* No pseudo-element needed */
 
 /* Mobile adjustments */
 @media (max-width: 600px) {
+    .timeline {
+        padding-left: 1rem;
+    }
+
     .timeline-item {
-        padding-left: 20px;
+        padding-left: 30px;
+    }
+
+    .timeline-role {
+        font-size: 1.4rem;
     }
 }

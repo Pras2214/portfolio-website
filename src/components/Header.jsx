@@ -25,17 +25,21 @@ const Header = () => {
         <header className="site-header flex-between">
             <div className="header-logo">
                 <Link to="/" className='text-uppercase'>
-                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontStyle: 'italic' }}>P</span><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}>rasann</span>
-                    <span>  </span>
-                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontStyle: 'italic' }}>P</span><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}>arikh</span>
+                    <span style={{ fontFamily: 'var(--font-serif)' }}>Prasann Parikh</span>
                 </Link>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="desktop-nav">
-                <Link to="/experience">Experience</Link>
-                <Link to="/projects">Projects</Link>
-                <Link to="/portfolio">Portfolio</Link>
+                <Link to="/experience" className={`nav-link ${location.pathname === '/experience' ? 'active' : ''}`}>
+                    Experience
+                </Link>
+                <Link to="/projects" className={`nav-link ${location.pathname === '/projects' ? 'active' : ''}`}>
+                    Projects
+                </Link>
+                <Link to="/portfolio" className={`nav-link ${location.pathname === '/portfolio' ? 'active' : ''}`}>
+                    Portfolio
+                </Link>
 
                 <div
                     onMouseEnter={() => setIsOpen(true)}
