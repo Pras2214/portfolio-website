@@ -24,7 +24,11 @@ const Header = () => {
     return (
         <header className="site-header flex-between">
             <div className="header-logo">
-                <Link to="/" className='text-uppercase'>Prasann Parikh</Link>
+                <Link to="/" className='text-uppercase'>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontStyle: 'italic' }}>P</span><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}>rasann</span>
+                    <span>  </span>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontStyle: 'italic' }}>P</span><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}>arikh</span>
+                </Link>
             </div>
 
             {/* Desktop Navigation */}

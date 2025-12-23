@@ -15,7 +15,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
         return () => clearTimeout(timer);
     }, []);
 
-    useFrame(() => {
+    useFrame((state, delta) => {
         if (indicatorRef.current && scroll) {
             // Fade out quickly as we scroll down
             // But respect the entrance animation too
@@ -24,7 +24,55 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
             const baseOpacity = showHint ? 0.7 : 0;
             indicatorRef.current.style.opacity = Math.min(baseOpacity, scrollOpacity);
         }
+
+        // Custom Snapping Logic
+        if (scroll) {
+            checkScroll(scroll, delta);
+        }
     });
+
+    // Custom Scroll Snapping Helper
+    const isScrolling = useRef(false);
+    const scrollTimeout = useRef(null);
+    const lastScroll = useRef(0);
+
+    const checkScroll = (scroll, delta) => {
+        const currentScroll = scroll.offset;
+
+        // Detect if scrolling happening
+        if (Math.abs(currentScroll - lastScroll.current) > 0.0001) {
+            isScrolling.current = true;
+            if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+
+            // Set a timeout to detect when scrolling stops
+            scrollTimeout.current = setTimeout(() => {
+                isScrolling.current = false;
+                snapToNearest(scroll);
+            }, 50); // Reduced to 50ms for snappy response
+        }
+        lastScroll.current = currentScroll;
+    };
+
+    const snapToNearest = (scroll) => {
+        const totalPages = details.length;
+        if (totalPages <= 1) return;
+
+        const scrollPerPage = 1 / (totalPages - 1);
+        const currentScroll = scroll.offset;
+
+        const nearestPage = Math.round(currentScroll / scrollPerPage);
+        const targetScroll = nearestPage * scrollPerPage;
+
+        // Smoothly scroll to the target
+        // We use the DOM element's scrollTo which Drei exposes via scroll.el
+        if (scroll.el) {
+            const targetScrollTop = targetScroll * (scroll.el.scrollHeight - scroll.el.clientHeight);
+            scroll.el.scrollTo({
+                top: targetScrollTop,
+                behavior: 'smooth'
+            });
+        }
+    };
 
     return (
         <Scroll html style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>

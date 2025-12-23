@@ -99,7 +99,7 @@ const PROJECT_DATA = [
     },
     {
         title: "Startup Weekend",
-        type: "Event Branding",
+        type: "Event Report",
         layout: "a4_vertical",
         desc: "Visual identity and logistics material for a 54-hour startup ideathon and pitching event.",
         stack: ["Photoshop", "Canva"],
@@ -170,7 +170,7 @@ const PROJECT_DATA = [
         ]
     },
     {
-        title: "airX",
+        title: "AirX",
         type: "Product Guide",
         layout: "a4_horizontal", // Adjusted to match likely landscape guide
         desc: "Warranty card and user guide for the airX CO2-filtering purifier.",
@@ -243,7 +243,7 @@ const PROJECT_DATA = [
     },
     {
         title: "Fork it",
-        type: "AI Social",
+        type: "AI Social Media",
         layout: "mobile",
         desc: "A collaborative video platform allowing users to 'branch' storylines using Generative AI.",
         stack: ["React", "Shadcn", "Framer-motion"],
@@ -376,7 +376,7 @@ const PROJECT_DATA = [
     },
     {
         title: "Kayaan Prints Dashboard",
-        type: "Admin Dashboard",
+        type: "B2B Admin Dashboard",
         layout: "desktop",
         desc: "A centralized admin panel for managing products, analytics, and buyer broadcasts.",
         stack: ["Figma", "React", "Material UI", "Framer-motion", "PDF Make"],
@@ -445,7 +445,7 @@ const PROJECT_DATA = [
         details: [
             {
                 title: "Overview",
-                text: "A dedicated ledger system for B2B agents to track orders, invoices, payments, and commission analytics in one unified view.",
+                text: "A dedicated book keeping system for B2B agents to track orders, invoices, payments, and commission analytics in one unified view.",
                 stack: ["React", "Material UI", "Shadcn", "LottieFiles", "PDF Make", "React-hot-keys-hook"],
                 imageColor: "#81ecec",
                 image: "/Smartagent Photos/Cover-image.png"
@@ -757,7 +757,7 @@ const PortfolioPage = () => {
                     onClick={() => setActiveId(null)}
                     style={{
                         position: 'fixed',
-                        top: '100px',
+                        top: '120px',
                         left: '30px',
                         background: 'transparent',
                         color: 'var(--text-color)',
