@@ -108,7 +108,7 @@ const Home = () => {
                 </p>
             </div>
 
-            <div className="animate-blur-in delay-2" style={{ borderTop: '1px solid #eaeaea', paddingTop: 'var(--spacing-sm)' }}>
+            <div style={{ borderTop: '1px solid #eaeaea', paddingTop: 'var(--spacing-sm)' }}>
                 <SignalList items={signals} />
             </div>
 

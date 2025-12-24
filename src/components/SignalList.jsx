@@ -22,25 +22,29 @@ const SignalList = ({ items }) => {
                 return (
                     <div
                         key={item.id}
-                        className={`signal-item ${isExpanded ? 'expanded' : ''} animate-blur-in`}
+                        className="animate-blur-in"
                         style={{ animationDelay: `${index * 0.1}s` }}
-                        onClick={() => handleItemClick(item.id)}
-                        onMouseEnter={() => setHoveredId(item.id)}
-                        onMouseLeave={() => setHoveredId(null)}
                     >
-                        <div className="signal-header">
-                            <span className="signal-number">{String(index + 1).padStart(2, '0')}</span>
-                            <div className="signal-content-wrapper">
-                                <span className="signal-title">{item.title}</span>
-                                <span className="signal-arrow">›</span>
+                        <div
+                            className={`signal-item ${isExpanded ? 'expanded' : ''}`}
+                            onClick={() => handleItemClick(item.id)}
+                            onMouseEnter={() => setHoveredId(item.id)}
+                            onMouseLeave={() => setHoveredId(null)}
+                        >
+                            <div className="signal-header">
+                                <span className="signal-number">{String(index + 1).padStart(2, '0')}</span>
+                                <div className="signal-content-wrapper">
+                                    <span className="signal-title">{item.title}</span>
+                                    <span className="signal-arrow">›</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className={`signal-details-wrapper ${isExpanded ? 'active' : ''}`}>
-                            <div className="signal-details">
-                                <p>
-                                    {item.content}
-                                </p>
+                            <div className={`signal-details-wrapper ${isExpanded ? 'active' : ''}`}>
+                                <div className="signal-details">
+                                    <p>
+                                        {item.content}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
