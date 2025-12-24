@@ -53,15 +53,19 @@ const experiences = [
 
 const Experience = () => {
     return (
-        <div className="experience-section animate-reveal delay-3">
-            <div className="experience-header">
+        <div className="experience-section">
+            <div className="experience-header animate-reveal">
                 <h1 className="experience-title">The Journey.</h1>
                 <p className="experience-subtitle">My professional timeline.</p>
             </div>
 
             <div className="timeline">
-                {experiences.map((exp) => (
-                    <div key={exp.id} className="timeline-item">
+                {experiences.map((exp, index) => (
+                    <div
+                        key={exp.id}
+                        className="timeline-item animate-blur-in"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                    >
                         <div className="timeline-marker"></div>
                         <div className="timeline-content">
                             <div className="timeline-header-group">

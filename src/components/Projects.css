@@ -10,10 +10,11 @@
 
 .projects-title {
     font-family: var(--font-serif);
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-size: clamp(3rem, 5vw, 4.5rem);
     font-style: italic;
     margin-bottom: 1rem;
     margin-top: 0;
+    line-height: 1.1;
 }
 
 .projects-subtitle {
@@ -37,39 +38,52 @@
     color: inherit;
     transition: all 0.3s ease;
     padding: 0;
-    /* Remove padding from card wrapper */
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    /* For image zoom */
+    overflow: visible;
+    /* Changed from hidden to allow 3D pop out */
 }
 
 .project-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-    /* Slightly stronger shadow */
-    border-color: #d0d0d0;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.25);
+    border-color: transparent;
+    z-index: 10;
 }
 
 .project-image-container {
     width: 100%;
-    height: 220px;
+    height: 240px;
     background-color: #f5f5f5;
-    overflow: hidden;
+    overflow: visible;
+    /* Allow image to pop out */
     position: relative;
     border-bottom: 1px solid #eaeaea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+    /* Add radius here since overflow is visible */
 }
 
 .project-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    width: auto;
+    height: auto;
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    padding: 0;
+    /* transition: transform handled by JS */
+    transition: filter 0.3s ease;
+    opacity: 0.9;
+    filter: grayscale(100%) brightness(0.95);
+    transform: scale(1);
+    pointer-events: none;
 }
 
 .project-card:hover .project-image {
-    transform: scale(1.05);
-    /* Subtle zoom */
+    /* transform handled by JS */
+    filter: grayscale(0%) brightness(1);
+    opacity: 1;
 }
 
 .project-content {

@@ -83,7 +83,7 @@ const Home = () => {
     return (
         <div>
             <div style={{ marginBottom: 'var(--spacing-lg)', padding: '0 0 4rem' }}>
-                <h1 className="heading-serif animate-reveal delay-1" style={{
+                <h1 className="heading-serif" style={{
                     fontSize: 'clamp(3rem, 5vw, 4.5rem)',
                     lineHeight: '1.1',
                     maxWidth: '15ch',
@@ -108,11 +108,11 @@ const Home = () => {
                 </p>
             </div>
 
-            <div className="animate-reveal delay-2" style={{ borderTop: '1px solid #eaeaea', paddingTop: 'var(--spacing-sm)' }}>
+            <div className="animate-blur-in delay-2" style={{ borderTop: '1px solid #eaeaea', paddingTop: 'var(--spacing-sm)' }}>
                 <SignalList items={signals} />
             </div>
 
-            <div className="animate-reveal delay-3" style={{
+            <div className="animate-blur-in delay-3" style={{
                 marginTop: '4rem',
                 marginBottom: '1rem',
                 display: 'flex',

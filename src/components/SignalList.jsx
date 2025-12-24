@@ -22,7 +22,8 @@ const SignalList = ({ items }) => {
                 return (
                     <div
                         key={item.id}
-                        className={`signal-item ${isExpanded ? 'expanded' : ''}`}
+                        className={`signal-item ${isExpanded ? 'expanded' : ''} animate-blur-in`}
+                        style={{ animationDelay: `${index * 0.1}s` }}
                         onClick={() => handleItemClick(item.id)}
                         onMouseEnter={() => setHoveredId(item.id)}
                         onMouseLeave={() => setHoveredId(null)}

@@ -624,7 +624,7 @@ const PortfolioPage = () => {
                 ref={titleRef}
                 style={{
                     position: 'absolute',
-                    top: '8rem',
+                    top: '9.5rem',
                     left: '0',
                     width: '100%',
                     textAlign: 'center',
@@ -636,7 +636,7 @@ const PortfolioPage = () => {
             >
                 <h1 className="experience-title" style={{
                     fontFamily: 'var(--font-serif)',
-                    fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+                    fontSize: 'clamp(3rem, 5vw, 4.5rem)',
                     fontStyle: 'italic',
                     marginBottom: '1rem',
                     textTransform: 'none',
@@ -663,7 +663,9 @@ const PortfolioPage = () => {
                 width: '100%',
                 height: '100%',
                 opacity: is3DReady ? 1 : 0,
-                transition: 'opacity 1s ease-out'
+                filter: is3DReady ? 'blur(0px)' : 'blur(10px)',
+                transform: is3DReady ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'all 1s cubic-bezier(0.2, 0.8, 0.2, 1)'
             }}>
                 <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
                     <color attach="background" args={['#f7f5f3']} />
@@ -692,6 +694,7 @@ const PortfolioPage = () => {
                             data={PROJECT_DATA}
                             onLoad={() => setIs3DReady(true)}
                             scrollRef={scrollRef} // Reads from the shared ref
+                            is3DReady={is3DReady}
                         />
                     </Suspense>
 

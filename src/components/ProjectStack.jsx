@@ -70,18 +70,6 @@ const ImageTransitionMaterial = {
     `
 };
 
-// Preload function
-const preloadTextures = (data) => {
-    data.forEach(project => {
-        if (project.coverImage) useTexture.preload(project.coverImage);
-        if (project.details) {
-            project.details.forEach(d => {
-                if (d.image) useTexture.preload(d.image);
-            });
-        }
-    });
-};
-
 function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredIndex, data, position: initialPos, rotation: initialRot, scrollRef }) {
     const meshRef = useRef();
     const coverMeshRef = useRef();
@@ -393,14 +381,7 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
     const GAP = 1.5;
 
     // Mount Transition State
-    const [mounted, setMounted] = useState(false);
     useEffect(() => {
-        // Trigger mount animation
-        // setMounted(true); // Removed as per instruction
-
-        // Preload textures
-        preloadTextures(data);
-
         // Trigger Ready State
         if (onLoad) onLoad();
     }, [data, onLoad]);
