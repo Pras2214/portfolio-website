@@ -104,7 +104,7 @@ const Home = () => {
                     marginRight: 'auto',
                     lineHeight: '1.6'
                 }}>
-                    A collection of traits, principles, and mental models that drive my decisions. These aren't just random quotes, but the core signals of who I am.
+                    A collection of traits, principles, and mental models that drive my decisions. These aren't just random statements, but the core signals of who I am.
                 </p>
             </div>
 
