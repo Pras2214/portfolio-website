@@ -72,49 +72,50 @@ const ProjectCard = ({ project, index }) => {
     };
 
     return (
-        <a
-            ref={cardRef}
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="project-card animate-blur-in"
-            style={{
-                animationDelay: `${index * 0.1}s`,
-                transform: cardStyle.transform,
-                boxShadow: cardStyle.boxShadow,
-                zIndex: cardStyle.zIndex,
-                transition: 'transform 0.1s ease-out, box-shadow 0.3s ease'
-            }}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-        >
-            <div className="project-image-container">
-                <img
-                    src={project.image}
-                    alt={project.title}
-                    className="project-image"
-                    style={{
-                        transform: imageStyle.transform,
-                        filter: imageStyle.filter,
-                        transition: 'transform 0.1s ease-out, filter 0.3s ease',
-                        borderRadius: '12px'
-                    }}
-                />
-            </div>
-            <div className="project-content">
-                <div className="project-card-header">
-                    <h3 className="project-name">{project.title}</h3>
-                    <div className="project-arrow">→</div>
+        <div className="animate-blur-in" style={{ animationDelay: `${index * 0.1}s` }}>
+            <a
+                ref={cardRef}
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="project-card"
+                style={{
+                    transform: cardStyle.transform,
+                    boxShadow: cardStyle.boxShadow,
+                    zIndex: cardStyle.zIndex,
+                    transition: 'transform 0.1s ease-out, box-shadow 0.3s ease'
+                }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+            >
+                <div className="project-image-container">
+                    <img
+                        src={project.image}
+                        alt={project.title}
+                        className="project-image"
+                        style={{
+                            transform: imageStyle.transform,
+                            filter: imageStyle.filter,
+                            transition: 'transform 0.1s ease-out, filter 0.3s ease',
+                            borderRadius: '12px'
+                        }}
+                    />
                 </div>
-                <span className="project-date">{project.date}</span>
-                <p className="project-description">{project.description}</p>
-                <div className="project-tech-stack">
-                    {project.tech.split(' • ').map((tech, idx) => (
-                        <span key={idx} className="tech-tag">{tech}</span>
-                    ))}
+                <div className="project-content">
+                    <div className="project-card-header">
+                        <h3 className="project-name">{project.title}</h3>
+                        <div className="project-arrow">→</div>
+                    </div>
+                    <span className="project-date">{project.date}</span>
+                    <p className="project-description">{project.description}</p>
+                    <div className="project-tech-stack">
+                        {project.tech.split(' • ').map((tech, idx) => (
+                            <span key={idx} className="tech-tag">{tech}</span>
+                        ))}
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
     );
 };
 
