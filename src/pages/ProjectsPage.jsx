@@ -4,25 +4,28 @@ import '../components/Projects.css';
 const ProjectCard = ({ project, index }) => {
     const cardRef = useRef(null);
     const imageRef = useRef(null);
-    const isEntering = useRef(false);
+    const wrapperRef = useRef(null);
+    const isHoveredRef = useRef(false);
 
     const handleMouseEnter = () => {
-        isEntering.current = true;
-        if (cardRef.current && imageRef.current) {
-            // Smooth "ease-in" pickup
-            const ease = '0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
-            cardRef.current.style.transition = `transform ${ease}, box-shadow ${ease}`;
-            imageRef.current.style.transition = `transform ${ease}, filter ${ease}, box-shadow ${ease}`;
-        }
+        if (!cardRef.current || !imageRef.current || !wrapperRef.current) return;
 
-        // Switch to fast tracking after the initial ease-in completes
-        setTimeout(() => {
-            isEntering.current = false;
-        }, 400);
+        isHoveredRef.current = true;
+
+        // Set transitions ONCE on enter - this prevents glitchy behavior
+        // All effects synchronized to 0.15s
+        cardRef.current.style.transition = 'transform 0.15s ease-out, box-shadow 0.15s ease-out';
+        cardRef.current.style.zIndex = '10';
+
+        imageRef.current.style.transition = 'transform 0.15s ease-out, filter 0.15s ease-out, box-shadow 0.15s ease-out';
+
+        // Control scale via JS instead of CSS :hover for perfect sync
+        wrapperRef.current.style.transition = 'transform 0.15s ease-out';
+        wrapperRef.current.style.transform = 'scale(1.1)';
     };
 
     const handleMouseMove = (e) => {
-        if (!cardRef.current || !imageRef.current) return;
+        if (!cardRef.current || !imageRef.current || !isHoveredRef.current) return;
 
         const { left, top, width, height } = cardRef.current.getBoundingClientRect();
         const x = e.clientX - left;
@@ -35,8 +38,8 @@ const ProjectCard = ({ project, index }) => {
         const rotateY = ((x - centerX) / centerX) * 5;
 
         // Image "Pop Out" & Follow Logic
-        const moveX = ((x - centerX) / centerX) * 15;
-        const moveY = ((y - centerY) / centerY) * 15;
+        const moveX = ((x - centerX) / centerX) * 25;
+        const moveY = ((y - centerY) / centerY) * 25;
 
         // Dynamic Shadow
         const cardShadowX = -moveX;
@@ -44,38 +47,37 @@ const ProjectCard = ({ project, index }) => {
         const shadowX = -moveX * 0.5;
         const shadowY = -moveY * 0.5;
 
-        // Check if we are in the "entering" phase
-        if (!isEntering.current) {
-            // Use a very fast transition for 1:1 responsive tracking
-            cardRef.current.style.transition = 'transform 0.1s ease-out, box-shadow 0.1s ease-out';
-            imageRef.current.style.transition = 'transform 0.1s ease-out, filter 0.1s ease-out, box-shadow 0.1s ease-out';
-        }
-
-        cardRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        // ONLY update values, NOT transitions (transitions set in handleMouseEnter)
+        // This prevents constant transition resets and allows smooth tracking
+        cardRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         cardRef.current.style.boxShadow = `${cardShadowX}px ${cardShadowY + 30}px 60px -12px rgba(0, 0, 0, 0.25)`;
-        cardRef.current.style.zIndex = '10';
 
-        imageRef.current.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.15)`;
-        // Use boxShadow instead of drop-shadow for performance
+        // ONLY update values, NOT transitions
+        imageRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`;
         imageRef.current.style.filter = `grayscale(0%) opacity(1)`;
         imageRef.current.style.boxShadow = `${shadowX}px ${shadowY + 15}px 30px rgba(0,0,0,0.35)`;
     };
 
     const handleMouseLeave = () => {
-        if (!cardRef.current || !imageRef.current) return;
-        isEntering.current = false; // Reset flag
+        if (!cardRef.current || !imageRef.current || !wrapperRef.current) return;
+
+        isHoveredRef.current = false;
 
         // Re-enable transition for smooth reset
         cardRef.current.style.transition = 'transform 0.5s ease-out, box-shadow 0.5s ease-out';
-        imageRef.current.style.transition = 'transform 0.5s ease-out, filter 0.5s ease-out, box-shadow 0.5s ease-out';
-
-        cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+        cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
         cardRef.current.style.boxShadow = 'none';
         cardRef.current.style.zIndex = '1';
 
-        imageRef.current.style.transform = 'translate(0px, 0px) scale(1)';
+        // Reset image translate and filter
+        imageRef.current.style.transition = 'transform 0.5s ease-out, filter 0.5s ease-out, box-shadow 0.5s ease-out';
+        imageRef.current.style.transform = 'translate(0px, 0px)';
         imageRef.current.style.filter = 'grayscale(100%) opacity(0.9)';
         imageRef.current.style.boxShadow = 'none';
+
+        // Reset wrapper scale
+        wrapperRef.current.style.transition = 'transform 0.5s ease-out';
+        wrapperRef.current.style.transform = 'scale(1)';
     };
 
     return (
@@ -91,19 +93,22 @@ const ProjectCard = ({ project, index }) => {
                 onMouseLeave={handleMouseLeave}
             >
                 <div className="project-image-container">
-                    <img
-                        ref={imageRef}
-                        src={project.image}
-                        alt={project.title}
-                        className="project-image"
-                        style={{
-                            // Initial styles matching CSS to prevent jumps
-                            transform: 'translate(0px, 0px) scale(1)',
-                            filter: 'grayscale(100%) opacity(0.9)',
-                            transition: 'transform 0.5s ease-out, filter 0.5s ease-out',
-                            borderRadius: '12px'
-                        }}
-                    />
+                    <div ref={wrapperRef} className="image-pop-wrapper">
+                        <img
+                            ref={imageRef}
+                            src={project.image}
+                            alt={project.title}
+                            className="project-image"
+                            style={{
+                                // Initial styles matching CSS to prevent jumps
+                                // Note: transform logic is now split (translate in JS, scale in CSS wrapper)
+                                transform: 'translate(0px, 0px)',
+                                filter: 'grayscale(100%) opacity(0.9)',
+                                transition: 'transform 0.5s ease-out, filter 0.5s ease-out',
+                                borderRadius: '12px'
+                            }}
+                        />
+                    </div>
                 </div>
                 <div className="project-content">
                     <div className="project-card-header">

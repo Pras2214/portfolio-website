@@ -41,6 +41,7 @@
     display: flex;
     flex-direction: column;
     overflow: visible;
+    height: 100%;
     /* Changed from hidden to allow 3D pop out */
 }
 
@@ -174,4 +175,15 @@
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+/* Image Pop Wrapper - Scale controlled by JavaScript for sync */
+.image-pop-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    /* transition and transform controlled by JS */
 }

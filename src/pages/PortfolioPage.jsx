@@ -503,7 +503,7 @@ const PROJECT_DATA = [
                     { title: "Workflow Extensibility", desc: "Integrated Export buttons recognize offline documentation needs." }
                 ],
                 imageColor: "#74b9ff",
-                image: "/Smartagent Photos/Customer-list.png"
+                image: "/Smartagent Photos/Invoice-list.png"
             }
         ]
     },
@@ -665,7 +665,7 @@ const PortfolioPage = () => {
                 opacity: is3DReady ? 1 : 0,
                 filter: is3DReady ? 'blur(0px)' : 'blur(10px)',
                 transform: is3DReady ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'all 1s cubic-bezier(0.2, 0.8, 0.2, 1)'
+                transition: 'all 2.5s cubic-bezier(0.2, 0.8, 0.2, 1)'
             }}>
                 <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
                     <color attach="background" args={['#f7f5f3']} />
