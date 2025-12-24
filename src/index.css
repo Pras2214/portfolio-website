@@ -33,6 +33,7 @@
 
 .heading-serif {
   font-family: var(--font-serif);
+  font-style: italic;
 }
 
 .flex-between {
