@@ -3,17 +3,27 @@ import '../components/Projects.css';
 
 const ProjectCard = ({ project, index }) => {
     const cardRef = useRef(null);
-    const [cardStyle, setCardStyle] = useState({
-        transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)',
-        boxShadow: '0 0 0 rgba(0,0,0,0)'
-    });
-    const [imageStyle, setImageStyle] = useState({
-        transform: 'translate(0px, 0px) scale(1)',
-        filter: 'grayscale(100%) opacity(0.9)'
-    });
+    const imageRef = useRef(null);
+    const isEntering = useRef(false);
+
+    const handleMouseEnter = () => {
+        isEntering.current = true;
+        if (cardRef.current && imageRef.current) {
+            // Smooth "ease-in" pickup
+            const ease = '0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            cardRef.current.style.transition = `transform ${ease}, box-shadow ${ease}`;
+            imageRef.current.style.transition = `transform ${ease}, filter ${ease}, box-shadow ${ease}`;
+        }
+
+        // Switch to fast tracking after the initial ease-in completes
+        setTimeout(() => {
+            isEntering.current = false;
+        }, 400);
+    };
 
     const handleMouseMove = (e) => {
-        if (!cardRef.current) return;
+        if (!cardRef.current || !imageRef.current) return;
+
         const { left, top, width, height } = cardRef.current.getBoundingClientRect();
         const x = e.clientX - left;
         const y = e.clientY - top;
@@ -21,54 +31,51 @@ const ProjectCard = ({ project, index }) => {
         const centerY = height / 2;
 
         // Card Tilt Logic (Subtle)
-        // RotateX is negative when mouse is at top (tilts away/up), positive at bottom.
-        // RotateY is positive when mouse is right (tilts away/left).
         const rotateX = ((y - centerY) / centerY) * -5;
         const rotateY = ((x - centerX) / centerX) * 5;
 
-        // Image "Pop Out" & Follow Logic (Stronger)
-        // Image follows the mouse: roughly 20px range
+        // Image "Pop Out" & Follow Logic
         const moveX = ((x - centerX) / centerX) * 15;
         const moveY = ((y - centerY) / centerY) * 15;
 
-        // Dynamic Shadow Logic
-        // Shadow moves OPPOsite to the light/object movement to simulate depth
-        // If image moves Right (+20px), shadow should shift Left (-offset)
+        // Dynamic Shadow
+        const cardShadowX = -moveX;
+        const cardShadowY = -moveY;
         const shadowX = -moveX * 0.5;
         const shadowY = -moveY * 0.5;
 
-        // Card Shadow (Subtle shift)
-        const cardShadowX = -moveX;
-        const cardShadowY = -moveY;
+        // Check if we are in the "entering" phase
+        if (!isEntering.current) {
+            // Use a very fast transition for 1:1 responsive tracking
+            cardRef.current.style.transition = 'transform 0.1s ease-out, box-shadow 0.1s ease-out';
+            imageRef.current.style.transition = 'transform 0.1s ease-out, filter 0.1s ease-out, box-shadow 0.1s ease-out';
+        }
 
-        setCardStyle({
-            transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`,
-            // Shadow offset opposite to mouse usually looks best for "light at center" or "light from top-left", 
-            // but here we simulate the object casting shadow on the ground based on its shift.
-            // If object shifts Right, shadow usually shifts Right? No, if light is static, shadow stays?
-            // "Floating object": If object moves Right, and light is above, shadow might stay, but parallax makes it look like it moves Left relative to object?
-            // Let's try shifting shadow opposite to movement to emphasize "lift".
-            boxShadow: `${cardShadowX}px ${cardShadowY + 30}px 60px -12px rgba(0, 0, 0, 0.25)`,
-            zIndex: 10
-        });
+        cardRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        cardRef.current.style.boxShadow = `${cardShadowX}px ${cardShadowY + 30}px 60px -12px rgba(0, 0, 0, 0.25)`;
+        cardRef.current.style.zIndex = '10';
 
-        setImageStyle({
-            transform: `translate(${moveX}px, ${moveY}px) scale(1.15)`,
-            // Drop shadow offset opposite to movement creates "floating" feel
-            filter: `grayscale(0%) opacity(1) drop-shadow(${shadowX}px ${shadowY + 15}px 30px rgba(0,0,0,0.35))`
-        });
+        imageRef.current.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.15)`;
+        // Use boxShadow instead of drop-shadow for performance
+        imageRef.current.style.filter = `grayscale(0%) opacity(1)`;
+        imageRef.current.style.boxShadow = `${shadowX}px ${shadowY + 15}px 30px rgba(0,0,0,0.35)`;
     };
 
     const handleMouseLeave = () => {
-        setCardStyle({
-            transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)',
-            boxShadow: 'none',
-            zIndex: 1
-        });
-        setImageStyle({
-            transform: 'translate(0px, 0px) scale(1)',
-            filter: 'grayscale(100%) opacity(0.9)'
-        });
+        if (!cardRef.current || !imageRef.current) return;
+        isEntering.current = false; // Reset flag
+
+        // Re-enable transition for smooth reset
+        cardRef.current.style.transition = 'transform 0.5s ease-out, box-shadow 0.5s ease-out';
+        imageRef.current.style.transition = 'transform 0.5s ease-out, filter 0.5s ease-out, box-shadow 0.5s ease-out';
+
+        cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+        cardRef.current.style.boxShadow = 'none';
+        cardRef.current.style.zIndex = '1';
+
+        imageRef.current.style.transform = 'translate(0px, 0px) scale(1)';
+        imageRef.current.style.filter = 'grayscale(100%) opacity(0.9)';
+        imageRef.current.style.boxShadow = 'none';
     };
 
     return (
@@ -79,24 +86,21 @@ const ProjectCard = ({ project, index }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="project-card"
-                style={{
-                    transform: cardStyle.transform,
-                    boxShadow: cardStyle.boxShadow,
-                    zIndex: cardStyle.zIndex,
-                    transition: 'transform 0.1s ease-out, box-shadow 0.3s ease'
-                }}
+                onMouseEnter={handleMouseEnter}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
             >
                 <div className="project-image-container">
                     <img
+                        ref={imageRef}
                         src={project.image}
                         alt={project.title}
                         className="project-image"
                         style={{
-                            transform: imageStyle.transform,
-                            filter: imageStyle.filter,
-                            transition: 'transform 0.1s ease-out, filter 0.3s ease',
+                            // Initial styles matching CSS to prevent jumps
+                            transform: 'translate(0px, 0px) scale(1)',
+                            filter: 'grayscale(100%) opacity(0.9)',
+                            transition: 'transform 0.5s ease-out, filter 0.5s ease-out',
                             borderRadius: '12px'
                         }}
                     />
