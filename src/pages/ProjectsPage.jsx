@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import '../components/Projects.css';
 
 const ProjectCard = ({ project, index }) => {
@@ -179,7 +179,7 @@ const ProjectsPage = () => {
             id: 6,
             title: "Story Sphere",
             date: "Oct 2023",
-            tech: "PHP • MySQL • HTML/CSS",
+            tech: "HTML • CSS • PHP • MySQL",
             description: "Blogging platform for sharing content through a simple and intuitive interface.",
             link: "https://blogging-website.infinityfree.me/",
             image: "/Projects Photos/Blogging-website.png"

@@ -107,7 +107,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                         height: '100vh',
                         display: 'flex',
                         alignItems: 'center',
-                        paddingLeft: '8%',
+                        paddingLeft: '5%',
                         boxSizing: 'border-box',
                         position: 'relative' // For absolute anchoring
                     }}>
@@ -137,7 +137,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                     fontStyle: 'italic',
                                     fontSize: '1rem',
                                     marginBottom: '0.5rem'
-                                }}>Scroll to explore</p>
+                                }}>Scroll for more</p>
                                 <div style={{
                                     width: '1px',
                                     height: '40px',
@@ -151,110 +151,322 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                         {/* The Text Card (Stops Propagation so clicking text doesn't close) */}
                         <div
                             style={{
-                                maxWidth: '450px',
+                                maxWidth: '480px',
                                 padding: '2rem',
-                                paddingLeft: '3rem', // Space for accent
-                                // Magazine Style: Minimalist, just clean typography + glass hint
-                                background: 'rgba(255, 255, 255, 0.1)',
-                                backdropFilter: 'blur(10px)',
-                                position: 'relative', // For absolute accent
-                                transform: `translateY(${i % 2 === 0 ? '0' : '40px'})`,
-                                transition: 'transform 0.5s ease',
+                                paddingLeft: '2.5rem',
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%)',
+                                backdropFilter: 'blur(28px) saturate(180%)',
+                                borderRadius: '20px',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                position: 'relative',
+                                boxShadow: `
+                                    0 1px 1px rgba(0, 0, 0, 0.03),
+                                    0 2px 2px rgba(0, 0, 0, 0.03),
+                                    0 4px 4px rgba(0, 0, 0, 0.03),
+                                    0 8px 8px rgba(0, 0, 0, 0.03),
+                                    0 16px 16px rgba(0, 0, 0, 0.03),
+                                    inset 0 1px 0 rgba(255, 255, 255, 0.15)
+                                `,
+                                overflow: 'hidden'
                             }}
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            {/* Creative Accent Bar */}
+                            {/* Floating Geometric Accent - Top Right */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '-40px',
+                                right: '-40px',
+                                width: '120px',
+                                height: '120px',
+                                borderRadius: '50%',
+                                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%)',
+                                pointerEvents: 'none'
+                            }}></div>
+
+                            {/* Geometric Line Accent - Left */}
                             <div style={{
                                 position: 'absolute',
                                 left: '0',
-                                top: '2.5rem',
-                                width: '4px',
-                                height: '40px',
-                                background: 'var(--text-color)',
-                                borderRadius: '0 4px 4px 0',
-                                opacity: 0.8
+                                top: '30%',
+                                width: '2px',
+                                height: '40%',
+                                background: 'linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%)',
+                                borderRadius: '2px'
                             }}></div>
+
+                            {/* Large Decorative Number with Shadow */}
                             <span style={{
                                 display: 'block',
                                 fontSize: '4rem',
                                 fontFamily: 'var(--font-serif)',
                                 fontWeight: '700',
-                                color: 'rgba(0,0,0,0.05)',
+                                color: 'rgba(0, 0, 0, 0.05)',
                                 lineHeight: 0.5,
-                                marginLeft: '-20px',
-                                marginBottom: '-10px'
+                                marginLeft: '-8px',
+                                marginBottom: '0px',
+                                userSelect: 'none',
+                                position: 'relative',
+                                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.02)',
+                                zIndex: 1
                             }}>
                                 0{i + 1}
                             </span>
+
+                            {/* Title with Subtle Shadow */}
                             <h2 style={{
                                 fontFamily: 'var(--font-serif)',
-                                fontSize: '3rem',
-                                margin: '0 0 1rem',
+                                fontSize: '2.25rem',
+                                margin: '-0.2rem 0 1rem 0.5rem',
                                 color: 'var(--text-color)',
                                 lineHeight: 1.1,
-                                fontStyle: 'italic'
+                                fontStyle: 'italic',
+                                fontWeight: '600',
+                                position: 'relative',
+                                textShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                                zIndex: 1
                             }}>
                                 {section.title}
                             </h2>
-                            <div style={{ width: '40px', height: '2px', background: 'var(--text-color)', marginBottom: '1.5rem', opacity: 0.5 }}></div>
-                            {/* Flexible Content Rendering */}
-                            {section.uxChallenge ? (
-                                <div style={{ fontFamily: 'var(--font-sans)', color: 'var(--text-color)' }}>
-                                    <div style={{ marginBottom: '1.5rem' }}>
-                                        <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.7, marginBottom: '0.25rem' }}>The UX Challenge</h3>
-                                        <p style={{ fontSize: '1.05rem', lineHeight: 1.6, fontWeight: 300, margin: 0 }}>{section.uxChallenge}</p>
-                                    </div>
 
-                                    <div style={{ marginBottom: '1.5rem' }}>
-                                        <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.7, marginBottom: '0.25rem' }}>The HCI Solution</h3>
-                                        <p style={{ fontSize: '1.05rem', lineHeight: 1.6, fontWeight: 300, margin: 0 }}>{section.hciSolution}</p>
-                                    </div>
-
-                                    {section.features && (
-                                        <ul style={{ paddingLeft: '1.2rem', fontSize: '1rem', lineHeight: 1.6, opacity: 0.9 }}>
-                                            {section.features.map((feature, fIdx) => (
-                                                <li key={fIdx} style={{ marginBottom: '0.5rem' }}>
-                                                    <strong>{feature.title}:</strong> {feature.desc}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                            ) : (
+                            {/* Decorative Multi-Line Divider */}
+                            <div style={{ display: 'flex', gap: '4px', marginBottom: '1.25rem', alignItems: 'center' }}>
                                 <div style={{
-                                    fontFamily: 'var(--font-sans)',
-                                    color: 'var(--text-color)',
-                                }}>
-                                    <p style={{
-                                        fontSize: '1.1rem',
-                                        lineHeight: 1.7,
-                                        opacity: 0.9,
-                                        fontWeight: 300,
-                                        marginBottom: '1.5rem'
-                                    }}>
-                                        {section.text}
-                                    </p>
+                                    width: '40px',
+                                    height: '2px',
+                                    background: 'var(--text-color)',
+                                    opacity: 0.4,
+                                    borderRadius: '2px'
+                                }}></div>
+                                <div style={{
+                                    width: '8px',
+                                    height: '2px',
+                                    background: 'var(--text-color)',
+                                    opacity: 0.25,
+                                    borderRadius: '2px'
+                                }}></div>
+                            </div>
 
-                                    {section.stack && (
-                                        <div>
-                                            <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.7, marginBottom: '0.5rem' }}>Core Stack</h3>
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                                {section.stack.map((tech, tIdx) => (
-                                                    <span key={tIdx} style={{
-                                                        fontSize: '0.85rem',
-                                                        padding: '4px 10px',
-                                                        borderRadius: '15px',
-                                                        background: 'rgba(0,0,0,0.05)',
+                            {/* Content */}
+                            <div style={{ fontFamily: 'var(--font-sans)', color: 'var(--text-color)', position: 'relative', zIndex: 1 }}>
+                                {/* Overview Section - Special Design */}
+                                {section.text ? (
+                                    <>
+                                        <p style={{
+                                            fontSize: '1.15rem',
+                                            lineHeight: 1.75,
+                                            fontWeight: '300',
+                                            margin: '0 0 2rem',
+                                            color: 'var(--text-color)',
+                                            opacity: 0.9,
+                                            letterSpacing: '0.3px'
+                                        }}>
+                                            {section.text}
+                                        </p>
+
+                                        {/* Tech Stack */}
+                                        {section.stack && section.stack.length > 0 && (
+                                            <div>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '10px',
+                                                    marginBottom: '0.85rem',
+                                                    paddingLeft: '0px'
+                                                }}>
+                                                    <div style={{
+                                                        width: '3px',
+                                                        height: '14px',
+                                                        background: 'var(--text-color)',
+                                                        opacity: 0.5,
+                                                        borderRadius: '1px'
+                                                    }}></div>
+                                                    <div style={{
+                                                        fontSize: '0.8rem',
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '2.5px',
+                                                        fontWeight: '700',
                                                         color: 'var(--text-color)',
-                                                        opacity: 0.8
+                                                        opacity: 0.75
                                                     }}>
-                                                        {tech}
-                                                    </span>
-                                                ))}
+                                                        Tech Stack
+                                                    </div>
+                                                </div>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    flexWrap: 'wrap',
+                                                    gap: '8px',
+                                                    paddingLeft: '0px'
+                                                }}>
+                                                    {section.stack.map((tech, tIdx) => (
+                                                        <span key={tIdx} style={{
+                                                            fontSize: '0.85rem',
+                                                            padding: '6px 14px',
+                                                            borderRadius: '20px',
+                                                            background: 'rgba(0, 0, 0, 0.04)',
+                                                            border: '1px solid rgba(0, 0, 0, 0.08)',
+                                                            color: 'var(--text-color)',
+                                                            opacity: 0.8,
+                                                            fontWeight: '500',
+                                                            letterSpacing: '0.3px',
+                                                            boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.03)'
+                                                        }}>
+                                                            {tech}
+                                                        </span>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        {/* Problem Section */}
+                                        {section.problem && (
+                                            <div style={{ marginBottom: '1.25rem' }}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '10px',
+                                                    marginBottom: '0.6rem',
+                                                    paddingLeft: '0px'
+                                                }}>
+                                                    <div style={{
+                                                        width: '3px',
+                                                        height: '14px',
+                                                        background: 'var(--text-color)',
+                                                        opacity: 0.5,
+                                                        borderRadius: '1px'
+                                                    }}></div>
+                                                    <div style={{
+                                                        fontSize: '0.8rem',
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '2.5px',
+                                                        fontWeight: '700',
+                                                        color: 'var(--text-color)',
+                                                        opacity: 0.75
+                                                    }}>
+                                                        Problem
+                                                    </div>
+                                                </div>
+                                                <p style={{
+                                                    fontSize: '0.95rem',
+                                                    lineHeight: 1.55,
+                                                    fontWeight: '400',
+                                                    margin: 0,
+                                                    color: 'var(--text-color)',
+                                                    opacity: 0.85,
+                                                    paddingLeft: '4px'
+                                                }}>
+                                                    {section.problem}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Solution Section */}
+                                        {section.solution && (
+                                            <div style={{ marginBottom: '1.25rem' }}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '10px',
+                                                    marginBottom: '0.6rem',
+                                                    paddingLeft: '0px'
+                                                }}>
+                                                    <div style={{
+                                                        width: '3px',
+                                                        height: '14px',
+                                                        background: 'var(--text-color)',
+                                                        opacity: 0.5,
+                                                        borderRadius: '1px'
+                                                    }}></div>
+                                                    <div style={{
+                                                        fontSize: '0.8rem',
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '2.5px',
+                                                        fontWeight: '700',
+                                                        color: 'var(--text-color)',
+                                                        opacity: 0.75
+                                                    }}>
+                                                        Solution
+                                                    </div>
+                                                </div>
+                                                <p style={{
+                                                    fontSize: '0.95rem',
+                                                    lineHeight: 1.55,
+                                                    fontWeight: '400',
+                                                    margin: 0,
+                                                    color: 'var(--text-color)',
+                                                    opacity: 0.85,
+                                                    paddingLeft: '4px'
+                                                }}>
+                                                    {section.solution}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Key Points */}
+                                        {section.bullets && section.bullets.length > 0 && (
+                                            <div>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '10px',
+                                                    marginBottom: '0.7rem',
+                                                    paddingLeft: '0px'
+                                                }}>
+                                                    <div style={{
+                                                        width: '3px',
+                                                        height: '14px',
+                                                        background: 'var(--text-color)',
+                                                        opacity: 0.5,
+                                                        borderRadius: '1px'
+                                                    }}></div>
+                                                    <div style={{
+                                                        fontSize: '0.8rem',
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '2.5px',
+                                                        fontWeight: '700',
+                                                        color: 'var(--text-color)',
+                                                        opacity: 0.75
+                                                    }}>
+                                                        Key Points
+                                                    </div>
+                                                </div>
+                                                <ul style={{
+                                                    margin: 0,
+                                                    padding: 0,
+                                                    paddingLeft: '4px',
+                                                    listStyle: 'none'
+                                                }}>
+                                                    {section.bullets.map((bullet, bIdx) => (
+                                                        <li key={bIdx} style={{
+                                                            fontSize: '0.875rem',
+                                                            lineHeight: 1.5,
+                                                            marginBottom: '0.5rem',
+                                                            paddingLeft: '1.2rem',
+                                                            position: 'relative',
+                                                            color: 'var(--text-color)',
+                                                            opacity: 0.75
+                                                        }}>
+                                                            <span style={{
+                                                                position: 'absolute',
+                                                                left: '0',
+                                                                top: '0.45rem',
+                                                                width: '6px',
+                                                                height: '6px',
+                                                                border: '1.5px solid var(--text-color)',
+                                                                borderRadius: '50%',
+                                                                opacity: 0.4,
+                                                                boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.1)'
+                                                            }}></span>
+                                                            {bullet}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))}

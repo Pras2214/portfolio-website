@@ -124,14 +124,15 @@ const Home = () => {
                 onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
                 onMouseLeave={(e) => e.currentTarget.style.opacity = '0.5'}
             >
-                <div style={{ width: '1px', height: '40px', background: 'var(--text-color)', marginBottom: '1.5rem' }}></div>
+                <div style={{ width: '1px', height: '40px', background: 'var(--text-color)', marginBottom: '1.5rem', opacity: 0.5 }}></div>
                 <h2 style={{
                     fontFamily: 'var(--font-serif)',
                     fontSize: '1.5rem',
                     textAlign: 'center',
                     fontStyle: 'italic',
                     maxWidth: '25ch',
-                    lineHeight: '1.4'
+                    lineHeight: '1.4',
+                    opacity: 0.5,
                 }}>
                     "Creativity is a wild mind and a disciplined eye."
                 </h2>
@@ -140,7 +141,8 @@ const Home = () => {
                     fontFamily: 'var(--font-sans)',
                     fontSize: '0.9rem',
                     letterSpacing: '0.05em',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    opacity: 0.5,
                 }}>— Dorothy Parker</p>
             </div>
         </div>

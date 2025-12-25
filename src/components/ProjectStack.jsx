@@ -79,6 +79,10 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     const isHovered = hoveredIndex === index;
     const [textBounds, setTextBounds] = useState(null);
 
+    // Mouse tracking for tilt effect on active project
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [isImageHovered, setIsImageHovered] = useState(false);
+
     const project = data[index] || {};
     const layout = project.layout || 'desktop';
     const dims = CARD_DIMENSIONS[layout] || CARD_DIMENSIONS.desktop;
@@ -141,8 +145,38 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
         if (isActive) {
             // STICKY MODE (Scrollytelling)
             easing.damp3(meshRef.current.position, [3.5, 0, 0], 0.4, delta);
-            easing.dampE(meshRef.current.rotation, [Math.PI / 2, 0, 0], 0.4, delta);
+
+            // Apply tilt effect to entire card when hovered (matching ProjectsPage effect)
+            if (isImageHovered) {
+                // Calculate tilt based on mouse position (matching ProjectsPage logic)
+                // Mouse position is normalized from -1 to 1
+                const rotateX = -mousePos.y * 0.087; // ~5 degrees max - up/down tilt
+                const rotateZ = -mousePos.x * 0.087; // ~5 degrees max - left/right tilt (using Z-axis, not Y)
+
+                // Apply tilt to the card (X and Z axis for perspective effect, avoiding Y-axis clockwise rotation)
+                easing.dampE(
+                    meshRef.current.rotation,
+                    [Math.PI / 2 + rotateX, 0, rotateZ],
+                    0.15,
+                    delta
+                );
+            } else {
+                // Reset to flat when not hovered
+                easing.dampE(
+                    meshRef.current.rotation,
+                    [Math.PI / 2, 0, 0],
+                    0.4,
+                    delta
+                );
+            }
+
             easing.damp3(meshRef.current.scale, [1.45, 1.45, 1.45], 0.4, delta);
+
+            // Keep cover mesh rotation flat and position fixed (no parallax)
+            if (coverMeshRef.current) {
+                coverMeshRef.current.rotation.set(-Math.PI / 2, 0, 0);
+                coverMeshRef.current.position.set(0, 0.1001, 0); // Parallax movement removed
+            }
 
             // Dynamic Content Logic - Shader Update
             if (coverMeshRef.current) {
@@ -253,8 +287,8 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
 
     // Dynamic Vertical Spacing
     const titleOffsetY = isMobile ? 0.08 : 0.12;
-    const typeOffsetY = isMobile ? -0.10 : -0.13;
-    const clickHintY = isMobile ? -0.22 : -0.26;
+    const typeOffsetY = isMobile ? -0.12 : -0.15;
+    const clickHintY = isMobile ? -0.25 : -0.28;
 
     return (
         <group
@@ -288,7 +322,35 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                 />
             </RoundedBox>
 
-            <mesh ref={coverMeshRef} position={[0, 0.1001, 0]} rotation={[-Math.PI / 2, 0, 0]} material={shaderMaterial}>
+            <mesh
+                ref={coverMeshRef}
+                position={[0, 0.1001, 0]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                material={shaderMaterial}
+                onPointerMove={(e) => {
+                    if (isActive) {
+                        e.stopPropagation();
+                        // Get normalized mouse position relative to the mesh
+                        // e.uv gives us 0-1 coordinates, convert to -1 to 1
+                        const x = (e.uv.x - 0.5) * 2;
+                        const y = (e.uv.y - 0.5) * 2;
+                        setMousePos({ x, y });
+                    }
+                }}
+                onPointerOver={(e) => {
+                    if (isActive) {
+                        e.stopPropagation();
+                        setIsImageHovered(true);
+                    }
+                }}
+                onPointerOut={(e) => {
+                    if (isActive) {
+                        e.stopPropagation();
+                        setIsImageHovered(false);
+                        setMousePos({ x: 0, y: 0 });
+                    }
+                }}
+            >
                 <planeGeometry args={dims.plane} />
             </mesh>
 
@@ -345,7 +407,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         {/* Project Type - Subtle & Tucked */}
                         <Text
                             position={[0, typeOffsetY, 0]}
-                            fontSize={0.09}
+                            fontSize={0.11}
                             color="#888888" // Softer grey
                             font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
                             anchorX="center"
@@ -357,7 +419,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         </Text>
                         <Text
                             position={[0, clickHintY, 0]} // Floating well below
-                            fontSize={0.07}
+                            fontSize={0.09}
                             color="#555555" // Dark Grey for visibility
                             fontStyle="italic"
                             font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
