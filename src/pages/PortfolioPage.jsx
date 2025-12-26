@@ -728,7 +728,8 @@ const PortfolioPage = () => {
                             pages={3}
                             damping={0.2}
                         >
-                            <ScrollBridge scrollRef={scrollRef} />
+                            {/* Only sync scroll ref from stack when stack is active */}
+                            {activeId === null && <ScrollBridge scrollRef={scrollRef} />}
                             <HtmlScrollSync htmlRef={titleRef} shouldSyncRef={shouldSyncRef} />
 
                             {/* Navigation Logic */}
