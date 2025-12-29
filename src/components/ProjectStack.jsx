@@ -1,6 +1,6 @@
 // ... imports
 import React, { useRef, useState, useMemo, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useScroll, RoundedBox, useTexture, Text, Html } from '@react-three/drei';
 import { easing } from 'maath';
 import * as THREE from 'three';
@@ -93,28 +93,64 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     // Random idle rotation speed and direction
     const randomSpeed = useMemo(() => (Math.random() * 0.2 + 0.1) * (Math.random() > 0.5 ? 1 : -1), []);
 
-    const detailImages = project.details ? project.details.map(d => d.image) : [];
+    // 1. Load Cover Image (Blocking / Suspense)
+    const coverUrl = project.coverImage || '/placeholders/no-image.png';
+    const coverTexture = useTexture(coverUrl);
 
-    // Unique texture URLs to load
-    const uniqueUrls = useMemo(() => {
-        const set = new Set();
-        if (project.coverImage) set.add(project.coverImage);
-        detailImages.forEach(url => { if (url) set.add(url); });
-        return Array.from(set);
-    }, [project.coverImage, detailImages]);
+    // 2. Load Detail Images (Async / Non-blocking)
+    const [detailTextures, setDetailTextures] = useState({});
 
-    // Load textures
-    const loadedTextures = useTexture(uniqueUrls.length > 0 ? uniqueUrls : ['/placeholders/no-image.png']);
+    const { gl } = useThree();
+
+    // Helper to configure texture (Anisotropy + Sharpness)
+    const configureTexture = useMemo(() => (tex) => {
+        if (!tex) return;
+        const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
+        tex.anisotropy = maxAnisotropy;
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.generateMipmaps = false;
+        tex.needsUpdate = true;
+    }, [gl]);
+
+    // Apply config to cover texture immediately
+    useEffect(() => {
+        configureTexture(coverTexture);
+    }, [coverTexture, configureTexture]);
+
+    // Load detail images in background
+    useEffect(() => {
+        if (!project.details || project.details.length === 0) return;
+
+        const loader = new THREE.TextureLoader();
+        const urlsToLoad = project.details
+            .map(d => d.image)
+            .filter(url => url && url !== coverUrl); // Don't re-load cover if used in details
+
+        // Deduplicate
+        const uniqueUrls = [...new Set(urlsToLoad)];
+
+        let active = true;
+
+        uniqueUrls.forEach(url => {
+            loader.load(url, (tex) => {
+                if (!active) return;
+                configureTexture(tex);
+                setDetailTextures(prev => ({ ...prev, [url]: tex }));
+            });
+        });
+
+        return () => { active = false; };
+    }, [project.details, coverUrl, configureTexture]);
 
     // Helper to get texture by URL
     const getTexture = (url) => {
-        const idx = uniqueUrls.indexOf(url);
-        if (idx !== -1) {
-            if (Array.isArray(loadedTextures)) return loadedTextures[idx];
-            return loadedTextures;
-        }
-        return null;
+        if (!url) return null;
+        if (url === coverUrl) return coverTexture;
+        return detailTextures[url] || coverTexture; // Fallback to cover if not yet loaded
     };
+
+
 
     // Prepare Shader Material
     const shaderMaterial = useMemo(() => {
