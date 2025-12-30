@@ -70,7 +70,7 @@ const ImageTransitionMaterial = {
     `
 };
 
-function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredIndex, data, position: initialPos, rotation: initialRot, scrollRef }) {
+function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredIndex, data, position: initialPos, rotation: initialRot, scrollRef, onOpen }) {
     const meshRef = useRef();
     const coverMeshRef = useRef();
     // const scroll = useScroll(); // Removed: using passed ref
@@ -362,13 +362,15 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                 if (isActive) {
                     setActiveId(null); // Close if already active
                 } else if (!isAnyActive) {
-                    // FLICKER FIX: Reset scroll position INSTANTLY to 0.
-                    // This prevents the shader from reading an old scroll value for the previous project,
-                    // which would cause Frame 0 of the new project to render a middle slide instead of the cover.
-                    if (scrollRef) scrollRef.current = 0;
-
-                    setActiveId(index);
-                    setHoveredIndex(null);
+                    // FLICKER FIX: Delegated to Parent to manage Transition State
+                    if (onOpen) {
+                        onOpen(index);
+                    } else {
+                        // Fallback (Should typically not happen if onOpen is passed)
+                        if (scrollRef) scrollRef.current = 0;
+                        setActiveId(index);
+                        setHoveredIndex(null);
+                    }
                 }
             }}
             onPointerOver={(e) => {
@@ -509,6 +511,31 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const GAP = 1.5;
 
+    // FLICKER FIX: Transition State
+    // We use this ref to "freeze" the stack position logic for exactly one frame (or until the state update settles).
+    // This prevents the stack from jumping to the "scroll=0" position immediately when we click a card,
+    // because we have to reset scrollRef.current = 0 for the incoming active card's shader.
+    const transitioningRef = useRef(false);
+
+    // Reset transitioning state when activeId stabilizes
+    useEffect(() => {
+        if (activeId !== null) {
+            transitioningRef.current = false;
+        }
+    }, [activeId]);
+
+    const handleProjectSelect = (index) => {
+        // 1. Mark transition as started so useFrame knows to IGNORE the sudden scrollRef=0 change
+        transitioningRef.current = true;
+
+        // 2. Reset scroll to 0 immediately so the NEW active card starts at the top (covers 0-frame shader glitch)
+        if (scrollRef) scrollRef.current = 0;
+
+        // 3. Trigger State Update
+        setActiveId(index);
+        setHoveredIndex(null);
+    };
+
     // Mount Transition State
     useEffect(() => {
         // Trigger Ready State
@@ -556,7 +583,10 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
                 // Just let the suspended component appear. Since we preloaded, it should be faster.
                 // Or: Initial Y could be lower and damp to target.
 
-                easing.damp3(groupRef.current.position, [0, targetY, 0], 0.2, delta);
+                // FLICKER FIX: Only update position if we are NOT in the middle of a transition
+                if (!transitioningRef.current) {
+                    easing.damp3(groupRef.current.position, [0, targetY, 0], 0.2, delta);
+                }
             } else {
                 // Active Logic -> Reset Group to Center
                 easing.damp3(groupRef.current.position, [0, 0, 0], 0.5, delta);
@@ -586,6 +616,7 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
                     position={[0, i * GAP, 0]}
                     rotation={[0.4, (i % 2 === 0 ? 0.1 : -0.1), 0]}
                     scrollRef={scrollRef}
+                    onOpen={handleProjectSelect}
                 />
             ))}
         </group>
