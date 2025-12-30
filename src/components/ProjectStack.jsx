@@ -1,5 +1,5 @@
 // ... imports
-import React, { useRef, useState, useMemo, useEffect } from 'react';
+import React, { useRef, useState, useMemo, useEffect, useLayoutEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useScroll, RoundedBox, useTexture, Text, Html } from '@react-three/drei';
 import { easing } from 'maath';
@@ -82,6 +82,22 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     // Mouse tracking for tilt effect on active project
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isImageHovered, setIsImageHovered] = useState(false);
+
+    // FLICKER FIX: Local Scroll Lock
+    // Even if scrollRef is reset, it might be overwritten by the unmounting stack scroll bridge.
+    // We enforce a hard lock to 0 for the first few frames of activation.
+    const lockScrollRef = useRef(false);
+
+    useLayoutEffect(() => {
+        if (isActive) {
+            lockScrollRef.current = true;
+            // Unlock after 100ms (enough time for transition to settle)
+            const t = setTimeout(() => {
+                lockScrollRef.current = false;
+            }, 100);
+            return () => clearTimeout(t);
+        }
+    }, [isActive]);
 
     const project = data[index] || {};
     const layout = project.layout || 'desktop';
@@ -201,7 +217,9 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
         if (!meshRef.current) return;
 
         // Get Scroll Offset securely
-        const scrollOffset = scrollRef?.current || 0;
+        // FLICKER FIX: If locked, force to 0.
+        let scrollOffset = scrollRef?.current || 0;
+        if (lockScrollRef.current) scrollOffset = 0;
 
         // Position Logic
         if (isActive) {
