@@ -93,64 +93,90 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     // Random idle rotation speed and direction
     const randomSpeed = useMemo(() => (Math.random() * 0.2 + 0.1) * (Math.random() > 0.5 ? 1 : -1), []);
 
-    // 1. Load Cover Image (Blocking / Suspense)
+    const detailImages = project.details ? project.details.map(d => d.image) : [];
+
+    // --- OPTIMIZATION: Deferred Texture Loading ---
+
+    // 1. Initial Load: ONLY the cover image (Suspense-enabled, fast)
+    // Use a placeholder if no cover image
     const coverUrl = project.coverImage || '/placeholders/no-image.png';
     const coverTexture = useTexture(coverUrl);
 
-    // 2. Load Detail Images (Async / Non-blocking)
+    // 2. Deferred Load: Detail images loaded on Hover or Active
     const [detailTextures, setDetailTextures] = useState({});
-
+    const [areDetailsLoaded, setAreDetailsLoaded] = useState(false);
     const { gl } = useThree();
 
-    // Helper to configure texture (Anisotropy + Sharpness)
-    const configureTexture = useMemo(() => (tex) => {
-        if (!tex) return;
-        const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
-        tex.anisotropy = maxAnisotropy;
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        tex.generateMipmaps = false;
-        tex.needsUpdate = true;
-    }, [gl]);
-
-    // Apply config to cover texture immediately
+    // Apply anisotropy to cover texture immediately
     useEffect(() => {
-        configureTexture(coverTexture);
-    }, [coverTexture, configureTexture]);
+        if (coverTexture) {
+            coverTexture.anisotropy = gl.capabilities.getMaxAnisotropy();
+            coverTexture.needsUpdate = true;
+        }
+    }, [coverTexture, gl]);
 
-    // Load detail images in background
+    // Lazy Load Details Effect
     useEffect(() => {
-        if (!project.details || project.details.length === 0) return;
+        // Trigger load if Hovered OR Active, and not yet loaded
+        if ((isHovered || isActive) && !areDetailsLoaded && detailImages.length > 0) {
 
-        const loader = new THREE.TextureLoader();
-        const urlsToLoad = project.details
-            .map(d => d.image)
-            .filter(url => url && url !== coverUrl); // Don't re-load cover if used in details
+            const loader = new THREE.TextureLoader();
+            let loadedCount = 0;
+            const newTextures = {};
+            const totalToLoad = detailImages.length;
 
-        // Deduplicate
-        const uniqueUrls = [...new Set(urlsToLoad)];
+            detailImages.forEach((url) => {
+                if (!url) {
+                    loadedCount++; // Skip but count
+                    if (loadedCount === totalToLoad) {
+                        setDetailTextures(prev => ({ ...prev, ...newTextures }));
+                        setAreDetailsLoaded(true);
+                    }
+                    return;
+                }
 
-        let active = true;
+                // Check if already in process (simple check)
+                loader.load(
+                    url,
+                    (tex) => {
+                        tex.anisotropy = gl.capabilities.getMaxAnisotropy();
+                        tex.needsUpdate = true;
+                        newTextures[url] = tex;
+                        loadedCount++;
 
-        uniqueUrls.forEach(url => {
-            loader.load(url, (tex) => {
-                if (!active) return;
-                configureTexture(tex);
-                setDetailTextures(prev => ({ ...prev, [url]: tex }));
+                        // Check completion
+                        if (loadedCount === totalToLoad) {
+                            setDetailTextures(prev => ({ ...prev, ...newTextures }));
+                            setAreDetailsLoaded(true);
+                        }
+                    },
+                    undefined,
+                    (err) => {
+                        console.warn('Failed to load detail texture:', url, err);
+                        loadedCount++; // Fail gracefully
+                        if (loadedCount === totalToLoad) {
+                            setDetailTextures(prev => ({ ...prev, ...newTextures }));
+                            setAreDetailsLoaded(true);
+                        }
+                    }
+                );
             });
-        });
+        }
+    }, [isHovered, isActive, areDetailsLoaded, detailImages, gl]);
 
-        return () => { active = false; };
-    }, [project.details, coverUrl, configureTexture]);
 
-    // Helper to get texture by URL
+    // Helper to get texture by URL (Handling both synchronous Cover and async Details)
     const getTexture = (url) => {
-        if (!url) return null;
-        if (url === coverUrl) return coverTexture;
-        return detailTextures[url] || coverTexture; // Fallback to cover if not yet loaded
+        // 1. Is it the cover? active or not, we likely have it.
+        if (url === project.coverImage) return coverTexture;
+
+        // 2. Is it in our lazy loaded map?
+        if (detailTextures[url]) return detailTextures[url];
+
+        // 3. Fallback: If we are asking for a detail image but it's not loaded yet,
+        // show the Cover Image temporarily to prevent transparent flicker.
+        return coverTexture;
     };
-
-
 
     // Prepare Shader Material
     const shaderMaterial = useMemo(() => {
@@ -336,6 +362,11 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                 if (isActive) {
                     setActiveId(null); // Close if already active
                 } else if (!isAnyActive) {
+                    // FLICKER FIX: Reset scroll position INSTANTLY to 0.
+                    // This prevents the shader from reading an old scroll value for the previous project,
+                    // which would cause Frame 0 of the new project to render a middle slide instead of the cover.
+                    if (scrollRef) scrollRef.current = 0;
+
                     setActiveId(index);
                     setHoveredIndex(null);
                 }
