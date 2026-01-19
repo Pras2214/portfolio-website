@@ -9,16 +9,12 @@ import PortfolioPage from './pages/PortfolioPage';
 import NotFound from './pages/NotFound';
 
 function App() {
-  // Check if we are on the portfolio subdomain
-  const isPortfolioSubdomain = window.location.hostname.startsWith('portfolio.');
-
   return (
     <Router>
       <ThemeProvider>
         <Layout>
           <Routes>
-            {/* If on portfolio subdomain, / renders PortfolioPage, otherwise Home */}
-            <Route path="/" element={isPortfolioSubdomain ? <PortfolioPage /> : <Home />} />
+            <Route path="/" element={<Home />} />
             <Route path="/experience" element={<ExperiencePage />} />
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />

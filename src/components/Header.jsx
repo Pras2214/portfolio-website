@@ -31,6 +31,9 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="desktop-nav">
+                <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
+                    About
+                </Link>
                 <Link to="/experience" className={`nav-link ${location.pathname === '/experience' ? 'active' : ''}`}>
                     Experience
                 </Link>
@@ -124,6 +127,7 @@ const Header = () => {
 
             {/* Mobile Menu Overlay */}
             <div className={`mobile-menu-overlay ${isMobileOpen ? 'open' : ''}`}>
+                <Link to="/" className="mobile-menu-link">About</Link>
                 <Link to="/experience" className="mobile-menu-link">Experience</Link>
                 <Link to="/projects" className="mobile-menu-link">Projects</Link>
                 <Link to="/portfolio" className="mobile-menu-link">Portfolio</Link>

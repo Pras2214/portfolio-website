@@ -35,6 +35,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
     const isScrolling = useRef(false);
     const scrollTimeout = useRef(null);
     const lastScroll = useRef(0);
+    const lastSnappedPage = useRef(0);
 
     const checkScroll = (scroll, delta) => {
         const currentScroll = scroll.offset;
@@ -60,8 +61,42 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
         const scrollPerPage = 1 / (totalPages - 1);
         const currentScroll = scroll.offset;
 
-        const nearestPage = Math.round(currentScroll / scrollPerPage);
-        const targetScroll = nearestPage * scrollPerPage;
+        // Calculate which page we are currently "closest" to based on standard rounding
+        const naiveNearestPage = Math.round(currentScroll / scrollPerPage);
+
+        // But we want to be more sensitive. 
+        // If we moved even a little bit away from the last snapped page in a direction, 
+        // we should favor that new direction.
+
+        let targetPage = naiveNearestPage;
+        const previousPage = lastSnappedPage.current;
+
+        const diff = currentScroll - (previousPage * scrollPerPage);
+        // Threshold: if moved more than 5% of a page distance, snap to next
+        const threshold = scrollPerPage * 0.05;
+
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                // Scrolled down/right > threshold -> Go to next page
+                targetPage = Math.min(previousPage + 1, totalPages - 1);
+            } else {
+                // Scrolled up/left > threshold -> Go to prev page
+                targetPage = Math.max(previousPage - 1, 0);
+            }
+        } else {
+            // Didn't move enough, snap back to where we were
+            targetPage = previousPage;
+        }
+
+        // However, if the user did a BIG scroll (more than 1 page), 
+        // the naiveNearestPage is probably more accurate than our incremental logic.
+        // Let's settle on the naive one if the distance is huge.
+        if (Math.abs(targetPage - naiveNearestPage) > 1) {
+            targetPage = naiveNearestPage;
+        }
+
+        lastSnappedPage.current = targetPage;
+        const targetScroll = targetPage * scrollPerPage;
 
         // Smoothly scroll to the target
         // We use the DOM element's scrollTo which Drei exposes via scroll.el

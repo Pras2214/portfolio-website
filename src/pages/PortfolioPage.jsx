@@ -5,6 +5,8 @@ import ProjectStack from '../components/ProjectStack';
 import ProjectScrollyTelling from '../components/ProjectScrollyTelling';
 import { ProjectNavigationLogic, ProjectNavigationUI } from '../components/ProjectNavigation';
 
+import LoadingScreen from '../components/LoadingScreen';
+
 // Scroll Bridge Component (Pumps scroll offset to a shared ref)
 const ScrollBridge = ({ scrollRef }) => {
     const scroll = useScroll();
@@ -27,9 +29,6 @@ const HtmlScrollSync = ({ htmlRef, shouldSyncRef }) => {
             // Adjust the multiplier to control speed.
             const offset = scroll.offset * window.innerHeight * 2; // Move up by 2 viewport heights over full scroll
             htmlRef.current.style.transform = `translateY(-${offset}px)`;
-            // Opacity fade out
-            htmlRef.current.style.opacity = 1 - scroll.offset * 3;
-            if (htmlRef.current.style.opacity < 0) htmlRef.current.style.opacity = 0;
         }
     });
     return null;
@@ -638,6 +637,8 @@ const PortfolioPage = () => {
             background: '#f7f5f3', // Match Canvas Background to prevent flash
             color: 'var(--text-color)',
         }}>
+            <LoadingScreen isLoading={!is3DReady} />
+
             {/* HTML Title Overlay (Rendered OUTSIDE Canvas for instant load) */}
             <div
                 ref={titleRef}
@@ -674,17 +675,14 @@ const PortfolioPage = () => {
                 </p>
             </div>
 
-            {/* 3D Scene Wrapper for Smooth Fade-In */}
+            {/* 3D Scene Wrapper - Loading handled by overlay now */}
             <div style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 width: '100%',
                 height: '100%',
-                opacity: is3DReady ? 1 : 0,
-                filter: is3DReady ? 'blur(0px)' : 'blur(10px)',
-                transform: is3DReady ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'all 2.5s cubic-bezier(0.2, 0.8, 0.2, 1)'
+                opacity: 1,
             }}>
                 <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
                     <color attach="background" args={['#f7f5f3']} />
