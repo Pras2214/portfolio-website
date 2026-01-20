@@ -191,18 +191,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
     }, [isHovered, isActive, areDetailsLoaded, detailImages, gl]);
 
 
-    // Helper to get texture by URL (Handling both synchronous Cover and async Details)
-    const getTexture = (url) => {
-        // 1. Is it the cover? active or not, we likely have it.
-        if (url === project.coverImage) return coverTexture;
 
-        // 2. Is it in our lazy loaded map?
-        if (detailTexturesRef.current[url]) return detailTexturesRef.current[url];
-
-        // 3. Fallback: If we are asking for a detail image but it's not loaded yet,
-        // show the Cover Image temporarily to prevent transparent flicker.
-        return coverTexture;
-    };
 
     // Prepare Shader Material
     const shaderMaterial = useMemo(() => {
@@ -223,6 +212,9 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
         }
     }, [dims, shaderMaterial]);
 
+    // Debug logging for Active Card Scroll
+    const frameCounter = useRef(0);
+
     useFrame((state, delta) => {
         if (!meshRef.current) return;
 
@@ -230,6 +222,18 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
         // FLICKER FIX: If locked, force to 0.
         let scrollOffset = scrollRef?.current || 0;
         if (lockScrollRef.current) scrollOffset = 0;
+
+        if (isActive) {
+            frameCounter.current += 1;
+            if (frameCounter.current % 60 === 0) {
+                console.log('ActiveCard Debug:', {
+                    scrollOffset,
+                    lock: lockScrollRef.current,
+                    detailLength: detailImages.length,
+                    texturesLoaded: Object.keys(detailTexturesRef.current).length
+                });
+            }
+        }
 
         // Position Logic
         if (isActive) {
@@ -283,8 +287,19 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                     const url1 = detailImages[idx1] || project.coverImage;
                     const url2 = detailImages[idx2] || project.coverImage;
 
-                    const tex1 = getTexture(url1);
-                    const tex2 = getTexture(url2);
+                    // Direct Ref Access to ensure freshness
+                    const loadedTextures = detailTexturesRef.current;
+                    const tex1 = (url1 === project.coverImage) ? coverTexture : (loadedTextures[url1] || coverTexture);
+                    const tex2 = (url2 === project.coverImage) ? coverTexture : (loadedTextures[url2] || coverTexture);
+
+                    // Debug Transition
+                    if (frameCounter.current % 120 === 0) {
+                        console.log('Shader Update:', {
+                            idx1, idx2, globalRatio,
+                            url1, hasTex1: !!loadedTextures[url1],
+                            url2, hasTex2: !!loadedTextures[url2]
+                        });
+                    }
 
                     shaderMaterial.uniforms.tex1.value = tex1;
                     shaderMaterial.uniforms.tex2.value = tex2;
