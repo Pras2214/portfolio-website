@@ -113,23 +113,24 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
 
     // --- OPTIMIZATION: Deferred Texture Loading ---
 
-    // 1. Initial Load: Async Cover Image (Non-blocking)
+    // 1. Initial Load: Use Suspense for Cover Image (Blocking but Clean)
     const coverUrl = project.coverImage || '/placeholders/no-image.png';
-    const [coverTexture, setCoverTexture] = useState(null);
+    const coverTexture = useTexture(coverUrl);
 
+    // Apply anisotropy to cover texture immediately
     useLayoutEffect(() => {
-        const loader = new THREE.TextureLoader();
-        loader.load(coverUrl, (tex) => {
-            tex.anisotropy = gl.capabilities.getMaxAnisotropy();
-            tex.needsUpdate = true;
-            setCoverTexture(tex);
-        });
-    }, [coverUrl, gl]);
+        if (coverTexture) {
+            coverTexture.anisotropy = gl.capabilities.getMaxAnisotropy();
+            coverTexture.needsUpdate = true;
+        }
+    }, [coverTexture, gl]);
 
     // 2. Deferred Load: Detail images loaded on Hover or Active
     const [detailTextures, setDetailTextures] = useState({});
+    const detailTexturesRef = useRef({}); // Ref for immediate access in useFrame
     const [areDetailsLoaded, setAreDetailsLoaded] = useState(false);
-    // const { gl } = useThree(); // REMOVED: gl is now passed as prop
+
+    // Lazy Load Details Effect
     useEffect(() => {
         // Trigger load if Hovered OR Active, and not yet loaded
         if ((isHovered || isActive) && !areDetailsLoaded && detailImages.length > 0) {
@@ -147,7 +148,8 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                     return;
                 }
 
-                // If already loaded in previous partial batch, skip re-loading
+                // If already loaded in previous partial batch or via useTexture cache, use it
+                // Note: THREE.TextureLoader doesn't cache automatically like useTexture, but we store in state.
                 if (detailTextures[url]) {
                     loadedCount++;
                     if (loadedCount === totalToLoad) {
@@ -163,8 +165,12 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         tex.needsUpdate = true;
 
                         // INCREMENTAL UPDATE: Update state as soon as ONE texture loads
-                        // This ensures the user sees images as they arrive, rather than waiting for the whole batch
-                        setDetailTextures(prev => ({ ...prev, [url]: tex }));
+                        // We use functional update to ensure we don't lose previous keys
+                        setDetailTextures(prev => {
+                            const next = { ...prev, [url]: tex };
+                            detailTexturesRef.current = next; // Sync Ref
+                            return next;
+                        });
 
                         loadedCount++;
                         if (loadedCount === totalToLoad) {
@@ -174,7 +180,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                     undefined,
                     (err) => {
                         console.warn('Failed to load detail texture:', url, err);
-                        loadedCount++; // Fail gracefully
+                        loadedCount++;
                         if (loadedCount === totalToLoad) {
                             setAreDetailsLoaded(true);
                         }
@@ -191,7 +197,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
         if (url === project.coverImage) return coverTexture;
 
         // 2. Is it in our lazy loaded map?
-        if (detailTextures[url]) return detailTextures[url];
+        if (detailTexturesRef.current[url]) return detailTexturesRef.current[url];
 
         // 3. Fallback: If we are asking for a detail image but it's not loaded yet,
         // show the Cover Image temporarily to prevent transparent flicker.
