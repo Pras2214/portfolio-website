@@ -307,9 +307,8 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                     shaderMaterial.uniforms.hasTexture.value = 1.0;
 
                 } else if (hasCoverImage) {
-                    const tex = getTexture(project.coverImage);
-                    shaderMaterial.uniforms.tex1.value = tex;
-                    shaderMaterial.uniforms.tex2.value = tex;
+                    shaderMaterial.uniforms.tex1.value = coverTexture;
+                    shaderMaterial.uniforms.tex2.value = coverTexture;
                     shaderMaterial.uniforms.transition.value = 0;
                     shaderMaterial.uniforms.hasTexture.value = 1.0;
                 } else {
@@ -332,9 +331,8 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
             // IDLE / STACK MODE
             if (coverMeshRef.current) {
                 if (hasCoverImage) {
-                    const tex = getTexture(project.coverImage);
-                    shaderMaterial.uniforms.tex1.value = tex;
-                    shaderMaterial.uniforms.tex2.value = tex;
+                    shaderMaterial.uniforms.tex1.value = coverTexture;
+                    shaderMaterial.uniforms.tex2.value = coverTexture;
                     shaderMaterial.uniforms.transition.value = 0;
                     shaderMaterial.uniforms.hasTexture.value = 1.0;
                 } else {
@@ -553,6 +551,7 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
     const groupRef = useRef();
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const GAP = 1.5;
+    const { gl } = useThree(); // Restore useThree usage at parent level
 
     // FLICKER FIX: Transition State
     // We use this ref to "freeze" the stack position logic for exactly one frame (or until the state update settles).
@@ -660,7 +659,7 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
                     rotation={[0.4, (i % 2 === 0 ? 0.1 : -0.1), 0]}
                     scrollRef={scrollRef}
                     onOpen={handleProjectSelect}
-                    gl={useThree().gl} // Pass gl from parent context
+                    gl={gl} // Pass correct gl context
                 />
             ))}
         </group>
