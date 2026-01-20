@@ -70,7 +70,7 @@ const ImageTransitionMaterial = {
     `
 };
 
-function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredIndex, data, position: initialPos, rotation: initialRot, scrollRef, onOpen }) {
+function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredIndex, data, position: initialPos, rotation: initialRot, scrollRef, onOpen, gl }) {
     const meshRef = useRef();
     const coverMeshRef = useRef();
     // const scroll = useScroll(); // Removed: using passed ref
@@ -113,56 +113,61 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
 
     // --- OPTIMIZATION: Deferred Texture Loading ---
 
-    // 1. Initial Load: ONLY the cover image (Suspense-enabled, fast)
-    // Use a placeholder if no cover image
+    // 1. Initial Load: Async Cover Image (Non-blocking)
     const coverUrl = project.coverImage || '/placeholders/no-image.png';
-    const coverTexture = useTexture(coverUrl);
+    const [coverTexture, setCoverTexture] = useState(null);
+
+    useLayoutEffect(() => {
+        const loader = new THREE.TextureLoader();
+        loader.load(coverUrl, (tex) => {
+            tex.anisotropy = gl.capabilities.getMaxAnisotropy();
+            tex.needsUpdate = true;
+            setCoverTexture(tex);
+        });
+    }, [coverUrl, gl]);
 
     // 2. Deferred Load: Detail images loaded on Hover or Active
     const [detailTextures, setDetailTextures] = useState({});
     const [areDetailsLoaded, setAreDetailsLoaded] = useState(false);
-    const { gl } = useThree();
-
-    // Apply anisotropy to cover texture immediately
-    useEffect(() => {
-        if (coverTexture) {
-            coverTexture.anisotropy = gl.capabilities.getMaxAnisotropy();
-            coverTexture.needsUpdate = true;
-        }
-    }, [coverTexture, gl]);
-
-    // Lazy Load Details Effect
+    // const { gl } = useThree(); // REMOVED: gl is now passed as prop
     useEffect(() => {
         // Trigger load if Hovered OR Active, and not yet loaded
         if ((isHovered || isActive) && !areDetailsLoaded && detailImages.length > 0) {
 
             const loader = new THREE.TextureLoader();
             let loadedCount = 0;
-            const newTextures = {};
             const totalToLoad = detailImages.length;
 
             detailImages.forEach((url) => {
                 if (!url) {
-                    loadedCount++; // Skip but count
+                    loadedCount++;
                     if (loadedCount === totalToLoad) {
-                        setDetailTextures(prev => ({ ...prev, ...newTextures }));
                         setAreDetailsLoaded(true);
                     }
                     return;
                 }
 
-                // Check if already in process (simple check)
+                // If already loaded in previous partial batch, skip re-loading
+                if (detailTextures[url]) {
+                    loadedCount++;
+                    if (loadedCount === totalToLoad) {
+                        setAreDetailsLoaded(true);
+                    }
+                    return;
+                }
+
                 loader.load(
                     url,
                     (tex) => {
                         tex.anisotropy = gl.capabilities.getMaxAnisotropy();
                         tex.needsUpdate = true;
-                        newTextures[url] = tex;
-                        loadedCount++;
 
-                        // Check completion
+                        // INCREMENTAL UPDATE: Update state as soon as ONE texture loads
+                        // This ensures the user sees images as they arrive, rather than waiting for the whole batch
+                        setDetailTextures(prev => ({ ...prev, [url]: tex }));
+
+                        loadedCount++;
                         if (loadedCount === totalToLoad) {
-                            setDetailTextures(prev => ({ ...prev, ...newTextures }));
                             setAreDetailsLoaded(true);
                         }
                     },
@@ -171,7 +176,6 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         console.warn('Failed to load detail texture:', url, err);
                         loadedCount++; // Fail gracefully
                         if (loadedCount === totalToLoad) {
-                            setDetailTextures(prev => ({ ...prev, ...newTextures }));
                             setAreDetailsLoaded(true);
                         }
                     }
@@ -635,6 +639,7 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
                     rotation={[0.4, (i % 2 === 0 ? 0.1 : -0.1), 0]}
                     scrollRef={scrollRef}
                     onOpen={handleProjectSelect}
+                    gl={useThree().gl} // Pass gl from parent context
                 />
             ))}
         </group>
