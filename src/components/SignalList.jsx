@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './SignalList.css';
+import SignalIcon from './SignalIcon';
 
 const SignalList = ({ items }) => {
     const [stickyExpandedIds, setStickyExpandedIds] = useState([]);
@@ -34,7 +35,10 @@ const SignalList = ({ items }) => {
                             <div className="signal-header">
                                 <span className="signal-number">{String(index + 1).padStart(2, '0')}</span>
                                 <div className="signal-content-wrapper">
-                                    <span className="signal-title">{item.title}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <SignalIcon id={item.id} />
+                                        <span className="signal-title">{item.title}</span>
+                                    </div>
                                     <span className="signal-arrow">›</span>
                                 </div>
                             </div>

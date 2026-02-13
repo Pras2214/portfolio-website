@@ -8,9 +8,13 @@ const Footer = () => {
             borderTop: '1px solid #eaeaea'
         }}>
             <div className="flex-between" style={{ alignItems: 'center' }}>
-                <div style={{ color: 'var(--subtle-color)', fontSize: '0.9rem' }}>
-                    &copy; {new Date().getFullYear()} Prasann Parikh<br />
-                    Rights are not yet reserved.
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <span style={{ fontSize: '0.9rem', color: 'var(--subtle-color)' }}>
+                        &copy; {new Date().getFullYear()} Prasann Parikh
+                    </span>
+                    <span className="animated-credit" style={{ fontFamily: "var(--font-serif)", fontSize: '0.85rem', fontStyle: 'italic', fontWeight: 'bold' }}>
+                        Designed & Crafted by Prasann Parikh
+                    </span>
                 </div>
                 <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                     {/* X (Twitter) */}

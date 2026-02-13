@@ -86,10 +86,10 @@ const NavPill = ({ title, type, isActive, onClick, isProjectOpen }) => {
     const activeOrHover = isActive || hover;
 
     // Color Logic:
-    // Active + Open Project -> Black (Focus)
+    // Active + Open Project -> Teal (Focus)
     // Active + Stack Browsing -> Dark Grey (Indicator)
     // Inactive -> Light Grey Transparent
-    const activeColor = isProjectOpen ? '#000000' : '#666666';
+    const activeColor = isProjectOpen ? 'var(--teal-color)' : '#666666';
 
     return (
         <div

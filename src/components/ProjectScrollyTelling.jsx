@@ -270,7 +270,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                     height: '2px',
                                     background: 'var(--text-color)',
                                     opacity: 0.4,
-                                    borderRadius: '2px'
+                                    borderRadius: '2px',
                                 }}></div>
                                 <div style={{
                                     width: '8px',
@@ -311,8 +311,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                                     <div style={{
                                                         width: '3px',
                                                         height: '14px',
-                                                        background: 'var(--text-color)',
-                                                        opacity: 0.5,
+                                                        background: 'var(--teal-color)',
                                                         borderRadius: '1px'
                                                     }}></div>
                                                     <div style={{
@@ -337,8 +336,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                                             fontSize: '0.85rem',
                                                             padding: '6px 14px',
                                                             borderRadius: '20px',
-                                                            background: 'rgba(0, 0, 0, 0.04)',
-                                                            border: '1px solid rgba(0, 0, 0, 0.08)',
+                                                            background: 'rgba(0, 0, 0, 0.05)',
                                                             color: 'var(--text-color)',
                                                             opacity: 0.8,
                                                             fontWeight: '500',
@@ -367,8 +365,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                                     <div style={{
                                                         width: '3px',
                                                         height: '14px',
-                                                        background: 'var(--text-color)',
-                                                        opacity: 0.5,
+                                                        background: 'var(--teal-color)',
                                                         borderRadius: '1px'
                                                     }}></div>
                                                     <div style={{
@@ -409,8 +406,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                                     <div style={{
                                                         width: '3px',
                                                         height: '14px',
-                                                        background: 'var(--text-color)',
-                                                        opacity: 0.5,
+                                                        background: 'var(--teal-color)',
                                                         borderRadius: '1px'
                                                     }}></div>
                                                     <div style={{
@@ -451,8 +447,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                                     <div style={{
                                                         width: '3px',
                                                         height: '14px',
-                                                        background: 'var(--text-color)',
-                                                        opacity: 0.5,
+                                                        background: 'var(--teal-color)',
                                                         borderRadius: '1px'
                                                     }}></div>
                                                     <div style={{
@@ -488,9 +483,9 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                                                 top: '0.45rem',
                                                                 width: '6px',
                                                                 height: '6px',
-                                                                border: '1.5px solid var(--text-color)',
+                                                                border: '1.5px solid var(--teal-color)',
                                                                 borderRadius: '50%',
-                                                                opacity: 0.4,
+                                                                opacity: 0.8,
                                                                 boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.1)'
                                                             }}></span>
                                                             {bullet}

@@ -518,7 +518,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                         <Text
                             position={[0, typeOffsetY, 0]}
                             fontSize={0.11}
-                            color="#888888" // Softer grey
+                            color="#35c4c2" // Teal highlight
                             font="/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf"
                             anchorX="center"
                             anchorY="middle"

@@ -189,7 +189,7 @@ const ProjectsPage = () => {
     return (
         <div className="projects-container">
             <div className="projects-header animate-reveal">
-                <h1 className="projects-title">The Archive.</h1>
+                <h1 className="projects-title">Side Projects.</h1>
                 <p className="projects-subtitle">Experiments, products, and engineering.</p>
             </div>
 

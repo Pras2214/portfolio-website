@@ -121,7 +121,7 @@
     transform: translateX(-10px);
     transition: all 0.3s ease;
     font-size: 1.25rem;
-    color: var(--accent-color);
+    color: var(--teal-color);
 }
 
 .project-card:hover .project-arrow {
@@ -167,7 +167,9 @@
 }
 
 .project-card:hover .tech-tag {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: rgba(53, 196, 194, 0.05);
+    color: var(--teal-color);
+    opacity: 1;
 }
 
 @media (max-width: 768px) {

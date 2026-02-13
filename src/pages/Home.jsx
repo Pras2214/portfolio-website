@@ -127,7 +127,7 @@ const Home = () => {
                 <div style={{ width: '1px', height: '40px', background: 'var(--text-color)', marginBottom: '1.5rem', opacity: 0.5 }}></div>
                 <h2 style={{
                     fontFamily: 'var(--font-serif)',
-                    fontSize: '1.5rem',
+                    fontSize: '3rem',
                     textAlign: 'center',
                     fontStyle: 'italic',
                     maxWidth: '25ch',
@@ -137,7 +137,6 @@ const Home = () => {
                     "Creativity is a wild mind and a disciplined eye."
                 </h2>
                 <p style={{
-                    marginTop: '1rem',
                     fontFamily: 'var(--font-sans)',
                     fontSize: '0.9rem',
                     letterSpacing: '0.05em',

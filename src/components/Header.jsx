@@ -38,7 +38,7 @@ const Header = () => {
                     Experience
                 </Link>
                 <Link to="/projects" className={`nav-link ${location.pathname === '/projects' ? 'active' : ''}`}>
-                    Projects
+                    Side Projects
                 </Link>
                 <Link to="/portfolio" className={`nav-link ${location.pathname === '/portfolio' ? 'active' : ''}`}>
                     Portfolio
@@ -129,7 +129,7 @@ const Header = () => {
             <div className={`mobile-menu-overlay ${isMobileOpen ? 'open' : ''}`}>
                 <Link to="/" className="mobile-menu-link">About</Link>
                 <Link to="/experience" className="mobile-menu-link">Experience</Link>
-                <Link to="/projects" className="mobile-menu-link">Projects</Link>
+                <Link to="/projects" className="mobile-menu-link">Side Projects</Link>
                 <Link to="/portfolio" className="mobile-menu-link">Portfolio</Link>
 
                 <div className="mobile-connect-section">

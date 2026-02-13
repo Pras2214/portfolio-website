@@ -11,6 +11,7 @@
   --subtle-color: #666;
   --accent-color: #000;
   --bg-color: #000;
+  --teal-color: #35c4c2;
 
   font-family: var(--font-sans);
   line-height: 1.6;
@@ -136,4 +137,30 @@ button:focus-visible {
 
 .delay-3 {
   animation-delay: 0.3s;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 200% center;
+  }
+
+  100% {
+    background-position: -200% center;
+  }
+}
+
+.animated-credit {
+  background: linear-gradient(90deg,
+      var(--text-color) 0%,
+      var(--text-color) 40%,
+      var(--teal-color) 50%,
+      var(--text-color) 60%,
+      var(--text-color) 100%);
+  background-size: 200% auto;
+  color: #1a1a1a;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 4s linear infinite;
+  display: inline-block;
 }

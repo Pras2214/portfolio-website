@@ -83,10 +83,10 @@
 }
 
 .timeline-item:hover .timeline-marker {
-    border-color: var(--text-color);
-    background-color: var(--text-color);
+    border-color: var(--teal-color);
+    background-color: var(--teal-color);
     transform: rotate(45deg) scale(1.2);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(53, 196, 194, 0.4);
 }
 
 .timeline-content {
@@ -125,7 +125,7 @@
 }
 
 .timeline-item:hover .timeline-role {
-    color: var(--accent-color);
+    color: var(--teal-color);
 }
 
 .timeline-meta {

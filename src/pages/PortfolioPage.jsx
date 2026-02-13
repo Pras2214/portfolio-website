@@ -808,6 +808,20 @@ const PortfolioPage = () => {
                 </button>
             )}
 
+
+
+            {/* Global Footer Credit - Fixed for Portfolio */}
+            <div style={{
+                position: 'fixed',
+                bottom: '2.5rem',
+                right: '2.5rem',
+                zIndex: 10,
+            }}>
+                <span className="animated-credit" style={{ fontFamily: "var(--font-serif)", fontSize: '1rem', fontStyle: 'italic', fontWeight: 'bold' }}>
+                    Designed & Crafted by Prasann Parikh
+                </span>
+            </div>
+
             <style>{`
                 @keyframes fadeIn {
                     from { opacity: 0; transform: translateX(-20px); }
