@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SignalIcon = ({ id }) => {
+const SignalIcon = ({ id, hoveredId }) => {
     // Map signal IDs to GIF filenames
     const getGifFilename = (id) => {
         switch (id) {
@@ -34,7 +34,7 @@ const SignalIcon = ({ id }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'var(--bg-color)', // Ensure blend mode works against this background
+            background: hoveredId === id ? '#f2f0ee' : 'var(--bg-color)', // Ensure blend mode works against this background
             marginBottom: '0.5rem',
             overflow: 'visible'
         }}>

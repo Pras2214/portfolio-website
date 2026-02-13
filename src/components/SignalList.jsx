@@ -36,7 +36,7 @@ const SignalList = ({ items }) => {
                                 <span className="signal-number">{String(index + 1).padStart(2, '0')}</span>
                                 <div className="signal-content-wrapper">
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <SignalIcon id={item.id} />
+                                        <SignalIcon id={item.id} hoveredId={hoveredId} />
                                         <span className="signal-title">{item.title}</span>
                                     </div>
                                     <span className="signal-arrow">›</span>
