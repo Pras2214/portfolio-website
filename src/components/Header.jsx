@@ -170,10 +170,10 @@ const Header = () => {
             {/* Mobile Menu Overlay */}
             <div className={`mobile-menu-overlay ${isMobileOpen ? 'open' : ''}`}>
                 <Link to="/" className="mobile-menu-link">About</Link>
-                <Link to="/recommend" className="mobile-menu-link">Recommend</Link>
                 <Link to="/experience" className="mobile-menu-link">Experience</Link>
                 <Link to="/projects" className="mobile-menu-link">Side Projects</Link>
                 <Link to="/portfolio" className="mobile-menu-link">Portfolio</Link>
+                <Link to="/recommend" className="mobile-menu-link">Recommend</Link>
 
                 <div className="mobile-connect-section">
                     <div className="mobile-connect-title">Connect</div>

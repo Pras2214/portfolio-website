@@ -454,36 +454,7 @@ const RecommendationForm = () => {
                                 key={cat}
                                 type="button"
                                 onClick={() => handleCategoryChange(cat)}
-                                style={{
-                                    position: 'relative',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    padding: '0.6rem 1.2rem',
-                                    borderRadius: '30px',
-                                    border: `1px solid ${selectedCategory === cat ? 'transparent' : 'rgba(128,128,128,0.2)'}`,
-                                    background: 'transparent',
-                                    color: selectedCategory === cat ? 'var(--teal-color)' : 'var(--subtle-color)',
-                                    cursor: 'pointer',
-                                    outline: 'none',
-                                    transition: 'color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.3s, background 0.3s',
-                                    fontSize: '0.9rem',
-                                    fontWeight: selectedCategory === cat ? 600 : 400
-                                }}
-                                onMouseEnter={(e) => {
-                                    if (selectedCategory !== cat) {
-                                        e.currentTarget.style.color = 'var(--text-color)';
-                                        e.currentTarget.style.borderColor = 'rgba(128,128,128,0.5)';
-                                        e.currentTarget.style.background = '#fafafa';
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    if (selectedCategory !== cat) {
-                                        e.currentTarget.style.color = 'var(--subtle-color)';
-                                        e.currentTarget.style.borderColor = 'rgba(128,128,128,0.2)';
-                                        e.currentTarget.style.background = 'transparent';
-                                    }
-                                }}
+                                className={`category-button ${selectedCategory === cat ? 'selected' : ''}`}
                             >
                                 {selectedCategory === cat && (
                                     <motion.div
@@ -502,8 +473,8 @@ const RecommendationForm = () => {
                                         transition={{ duration: 0.3, ease: [0.25, 0.8, 0.25, 1] }}
                                     />
                                 )}
-                                <span style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    {GIF_MAP[cat] && <div style={{ backgroundColor: selectedCategory === cat ? '#f2f9f9' : 'var(--bg-color)', width: '32px', height: '32px' }}><img src={GIF_MAP[cat]} alt={cat} style={{ width: '32px', height: '32px', objectFit: 'contain', mixBlendMode: 'multiply' }} /></div>}
+                                <span style={{ position: 'relative', zIndex: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: selectedCategory === cat ? '#f2f9f9' : 'var(--bg-color)' }}>
+                                    {GIF_MAP[cat] && <img src={GIF_MAP[cat]} alt={cat} style={{ width: '32px', height: '32px', objectFit: 'contain', mixBlendMode: 'multiply' }} />}
                                     {cat}
                                 </span>
                             </button>
@@ -517,7 +488,7 @@ const RecommendationForm = () => {
                         <input
                             className={inputClasses}
                             {...register('submitterName')}
-                            placeholder="e.g. John Doe"
+                            placeholder="e.g. Prasann Parikh"
                         />
                         <span className="input-highlight"></span>
                     </div>
@@ -600,6 +571,45 @@ const RecommendationForm = () => {
                     margin-bottom: 0.2rem;
                 }
                 
+                .category-button {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.6rem 1.2rem;
+                    border-radius: 30px;
+                    border: 1px solid rgba(128,128,128,0.2);
+                    background: transparent;
+                    color: var(--subtle-color);
+                    cursor: pointer;
+                    outline: none;
+                    transition: color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.3s, background 0.3s, box-shadow 0.3s;
+                    font-size: 0.9rem;
+                    font-weight: 400;
+                    -webkit-tap-highlight-color: transparent;
+                }
+                
+                .category-button:focus {
+                    outline: none;
+                }
+
+                .category-button:focus-visible {
+                    outline: 2px solid var(--teal-color);
+                    outline-offset: 2px;
+                }
+                
+                .category-button:hover:not(.selected) {
+                    color: var(--text-color);
+                    border-color: rgba(128,128,128,0.5);
+                    background: #fafafa;
+                }
+                
+                .category-button.selected {
+                    border-color: transparent;
+                    color: var(--teal-color);
+                    font-weight: 600;
+                    background: transparent;
+                }                
                 .creative-input-group {
                     position: relative;
                 }
@@ -618,9 +628,8 @@ const RecommendationForm = () => {
                     width: 100%;
                 }
                 
-                input.premium-input, select.premium-input {
-                    height: 3rem;
-                    box-sizing: border-box;
+                .form-group > .premium-input {
+                    margin-top: auto;
                 }
                 
                 .input-highlight {
