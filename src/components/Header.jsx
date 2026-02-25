@@ -43,6 +43,9 @@ const Header = () => {
                 <Link to="/portfolio" className={`nav-link ${location.pathname === '/portfolio' ? 'active' : ''}`}>
                     Portfolio
                 </Link>
+                <Link to="/recommend" className={`nav-link ${location.pathname === '/recommend' ? 'active' : ''}`}>
+                    Recommend
+                </Link>
 
                 <div
                     onMouseEnter={() => setIsOpen(true)}
@@ -128,6 +131,7 @@ const Header = () => {
             {/* Mobile Menu Overlay */}
             <div className={`mobile-menu-overlay ${isMobileOpen ? 'open' : ''}`}>
                 <Link to="/" className="mobile-menu-link">About</Link>
+                <Link to="/recommend" className="mobile-menu-link">Recommend</Link>
                 <Link to="/experience" className="mobile-menu-link">Experience</Link>
                 <Link to="/projects" className="mobile-menu-link">Side Projects</Link>
                 <Link to="/portfolio" className="mobile-menu-link">Portfolio</Link>

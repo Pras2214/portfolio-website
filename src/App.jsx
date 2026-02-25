@@ -5,7 +5,8 @@ import Home from './pages/Home';
 import ExperiencePage from './pages/ExperiencePage';
 import ProjectsPage from './pages/ProjectsPage';
 import PortfolioPage from './pages/PortfolioPage';
-
+import RecommendationsPage from './pages/RecommendationsPage';
+import RecommendationsAdminPage from './pages/RecommendationsAdminPage';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
             <Route path="/experience" element={<ExperiencePage />} />
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
+            <Route path="/recommend" element={<RecommendationsPage />} />
+            <Route path="/internal-recs" element={<RecommendationsAdminPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
