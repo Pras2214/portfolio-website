@@ -96,23 +96,30 @@ const NotFound = () => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.8rem',
-                    padding: '1rem 2rem',
-                    background: 'var(--text-color)',
-                    color: 'var(--bg-color)',
+                    padding: '1.2rem 2.5rem',
+                    background: 'linear-gradient(135deg, var(--teal-color), #2d9d9b)',
+                    color: '#ffffff',
                     textDecoration: 'none',
-                    borderRadius: '30px',
+                    borderRadius: '16px',
                     fontWeight: 600,
-                    fontSize: '0.95rem',
+                    fontSize: '1.1rem',
                     transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                    boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+                    boxShadow: '0 10px 20px rgba(53, 196, 194, 0.3)',
+                    marginTop: '0.5rem'
                 }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+                        e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                        e.currentTarget.style.boxShadow = '0 15px 30px rgba(53, 196, 194, 0.4)';
                     }}
                     onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                        e.currentTarget.style.boxShadow = '0 10px 20px rgba(53, 196, 194, 0.3)';
+                    }}
+                    onMouseDown={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0) scale(0.98)';
+                    }}
+                    onMouseUp={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
                     }}
                 >
                     Return to Base
