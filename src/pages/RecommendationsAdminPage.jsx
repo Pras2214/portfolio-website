@@ -15,6 +15,10 @@ const GIF_MAP = {
 };
 
 const RecommendationsAdminPage = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [passwordInput, setPasswordInput] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
     const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedFilters, setSelectedFilters] = useState([]);
@@ -43,8 +47,10 @@ const RecommendationsAdminPage = () => {
     };
 
     useEffect(() => {
-        fetchRecommendations();
-    }, []);
+        if (isAuthenticated) {
+            fetchRecommendations();
+        }
+    }, [isAuthenticated]);
 
     const categories = ['All', ...new Set(recommendations.map(r => r.category))];
 
@@ -109,6 +115,179 @@ const RecommendationsAdminPage = () => {
         hidden: { opacity: 0, y: 30 },
         show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
     };
+
+    const handlePasswordSubmit = (e) => {
+        e.preventDefault();
+        // Set the password here. Currently set to 'admin'
+        if (passwordInput === import.meta.env.VITE_ADMIN_PASSWORD) {
+            setIsAuthenticated(true);
+            setPasswordError('');
+        } else {
+            setPasswordError('Incorrect passcode.');
+        }
+    };
+
+    if (!isAuthenticated) {
+        return (
+            <div style={{
+                minHeight: '60vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '2rem'
+            }}>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    style={{
+                        background: 'rgba(128,128,128,0.02)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        padding: '3rem',
+                        borderRadius: '24px',
+                        border: '1px solid rgba(128,128,128,0.1)',
+                        boxShadow: '0 30px 60px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.1)',
+                        width: '100%',
+                        maxWidth: '400px',
+                        textAlign: 'center',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}
+                >
+                    {/* Decorative Blob */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '-50%',
+                        left: '-50%',
+                        width: '200%',
+                        height: '200%',
+                        background: 'radial-gradient(circle at center, rgba(53, 196, 194, 0.05) 0%, transparent 50%)',
+                        zIndex: 0,
+                        pointerEvents: 'none'
+                    }} />
+
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                        <div style={{
+                            width: '50px',
+                            height: '50px',
+                            margin: '0 auto 1.5rem',
+                            background: 'rgba(53, 196, 194, 0.08)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal-color)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+
+                        <h1 className="heading-serif" style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Restricted Access</h1>
+                        <p style={{ color: 'var(--subtle-color)', fontSize: '0.9rem', marginBottom: '2.5rem', lineHeight: '1.5', fontFamily: 'var(--font-sans)' }}>
+                            Please enter the passcode to view the vault.
+                        </p>
+
+                        <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type="password"
+                                    placeholder="Enter Password"
+                                    value={passwordInput}
+                                    onChange={(e) => {
+                                        setPasswordInput(e.target.value);
+                                        if (passwordError) setPasswordError('');
+                                    }}
+                                    style={{
+                                        width: '100%',
+                                        padding: '1rem 1.2rem',
+                                        paddingLeft: '3rem',
+                                        borderRadius: '12px',
+                                        border: `1px solid ${passwordError ? '#ff4d4f' : 'rgba(128,128,128,0.2)'}`,
+                                        background: 'var(--bg-color)',
+                                        color: 'var(--text-color)',
+                                        fontSize: '0.95rem',
+                                        outline: 'none',
+                                        transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                                        fontFamily: 'var(--font-sans)',
+                                        boxSizing: 'border-box'
+                                    }}
+                                    onFocus={(e) => {
+                                        if (!passwordError) e.target.style.borderColor = 'var(--teal-color)';
+                                        e.target.style.boxShadow = '0 0 0 3px rgba(53, 196, 194, 0.1)';
+                                    }}
+                                    onBlur={(e) => {
+                                        if (!passwordError) e.target.style.borderColor = 'rgba(128,128,128,0.2)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                />
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="var(--subtle-color)"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }}
+                                >
+                                    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                                </svg>
+                            </div>
+
+                            <AnimatePresence>
+                                {passwordError && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0, y: -10 }}
+                                        animate={{ opacity: 1, height: 'auto', y: 0 }}
+                                        exit={{ opacity: 0, height: 0, y: -10 }}
+                                        style={{ overflow: 'hidden', paddingBottom: '0.5rem' }}
+                                    >
+                                        <div style={{ background: 'rgba(255, 74, 74, 0.1)', border: '1px solid rgba(255, 74, 74, 0.3)', color: '#ff4a4a', padding: '1rem', borderRadius: '12px', textAlign: 'center', fontFamily: 'var(--font-sans)', fontSize: '0.9rem' }}>
+                                            {passwordError}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <motion.button
+                                whileHover={{ scale: 1.02, y: -2, boxShadow: '0 15px 30px rgba(53, 196, 194, 0.4)' }}
+                                whileTap={{ scale: 0.98 }}
+                                type="submit"
+                                style={{
+                                    padding: '1.2rem',
+                                    marginTop: '0.5rem',
+                                    background: 'linear-gradient(135deg, var(--teal-color), #2d9d9b)',
+                                    color: '#ffffff',
+                                    border: 'none',
+                                    outline: 'none',
+                                    borderRadius: '16px',
+                                    fontWeight: 600,
+                                    fontSize: '1.1rem',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                                    boxShadow: '0 10px 20px rgba(53, 196, 194, 0.3)',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}
+                            >
+                                Enter Vault
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    <path d="M12 15v2"></path>
+                                </svg>
+                            </motion.button>
+                        </form>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
 
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
