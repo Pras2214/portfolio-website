@@ -7,6 +7,10 @@ const Header = () => {
     const [isMobileOpen, setIsMobileOpen] = useState(false); // Mobile menu
     const location = useLocation();
 
+    // Refs and state for the animated active indicator
+    const navRef = React.useRef(null);
+    const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0 });
+
     // Close mobile menu on route change
     useEffect(() => {
         setIsMobileOpen(false);
@@ -21,6 +25,23 @@ const Header = () => {
         }
     }, [isMobileOpen]);
 
+    // Update indicator position when route changes or component mounts
+    useEffect(() => {
+        const activeLink = navRef.current?.querySelector('.nav-link.active');
+        if (activeLink && navRef.current) {
+            const navRect = navRef.current.getBoundingClientRect();
+            const linkRect = activeLink.getBoundingClientRect();
+
+            setIndicatorStyle({
+                width: linkRect.width,
+                left: linkRect.left - navRect.left,
+                opacity: 1
+            });
+        } else {
+            setIndicatorStyle(prev => ({ ...prev, opacity: 0 }));
+        }
+    }, [location.pathname]);
+
     return (
         <header className="site-header flex-between">
             <div className="header-logo">
@@ -30,7 +51,7 @@ const Header = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="desktop-nav">
+            <nav className="desktop-nav" ref={navRef} style={{ position: 'relative' }}>
                 <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
                     About
                 </Link>
@@ -46,6 +67,24 @@ const Header = () => {
                 <Link to="/recommend" className={`nav-link ${location.pathname === '/recommend' ? 'active' : ''}`}>
                     Recommend
                 </Link>
+
+                {/* Animated Indicator */}
+                <div
+                    className="nav-indicator"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        height: '100%',
+                        background: 'rgba(53, 196, 194, 0.05)',
+                        boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.02)',
+                        borderRadius: '2rem',
+                        transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                        left: indicatorStyle.left,
+                        width: indicatorStyle.width,
+                        opacity: indicatorStyle.opacity,
+                        zIndex: 0
+                    }}
+                />
 
                 <div
                     onMouseEnter={() => setIsOpen(true)}

@@ -1,6 +1,6 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import PrimaryButton from '../components/PrimaryButton';
 
 const NotFound = () => {
     return (
@@ -92,42 +92,13 @@ const NotFound = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
             >
-                <Link to="/" style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.8rem',
-                    padding: '1.2rem 2.5rem',
-                    background: 'linear-gradient(135deg, var(--teal-color), #2d9d9b)',
-                    color: '#ffffff',
-                    textDecoration: 'none',
-                    borderRadius: '16px',
-                    fontWeight: 600,
-                    fontSize: '1.1rem',
-                    transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                    boxShadow: '0 10px 20px rgba(53, 196, 194, 0.3)',
-                    marginTop: '0.5rem'
-                }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 15px 30px rgba(53, 196, 194, 0.4)';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 10px 20px rgba(53, 196, 194, 0.3)';
-                    }}
-                    onMouseDown={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0) scale(0.98)';
-                    }}
-                    onMouseUp={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                    }}
-                >
+                <PrimaryButton to="/" style={{ marginTop: '0.5rem' }}>
                     Return to Base
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
-                </Link>
+                </PrimaryButton>
             </motion.div>
         </div>
     );

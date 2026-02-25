@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../config/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
+import PrimaryButton from '../components/PrimaryButton';
 
 const GIF_MAP = {
     'Clothes': '/GIFs/Recommendation GIFs/shirt-shoe.gif',
@@ -252,28 +253,9 @@ const RecommendationsAdminPage = () => {
                                 )}
                             </AnimatePresence>
 
-                            <motion.button
-                                whileHover={{ scale: 1.02, y: -2, boxShadow: '0 15px 30px rgba(53, 196, 194, 0.4)' }}
-                                whileTap={{ scale: 0.98 }}
+                            <PrimaryButton
                                 type="submit"
-                                style={{
-                                    padding: '1.2rem',
-                                    marginTop: '0.5rem',
-                                    background: 'linear-gradient(135deg, var(--teal-color), #2d9d9b)',
-                                    color: '#ffffff',
-                                    border: 'none',
-                                    outline: 'none',
-                                    borderRadius: '16px',
-                                    fontWeight: 600,
-                                    fontSize: '1.1rem',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                                    boxShadow: '0 10px 20px rgba(53, 196, 194, 0.3)',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: '0.5rem'
-                                }}
+                                style={{ marginTop: '0.5rem', width: '100%' }}
                             >
                                 Enter Vault
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -281,7 +263,7 @@ const RecommendationsAdminPage = () => {
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                     <path d="M12 15v2"></path>
                                 </svg>
-                            </motion.button>
+                            </PrimaryButton>
                         </form>
                     </div>
                 </motion.div>

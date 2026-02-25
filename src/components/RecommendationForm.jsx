@@ -3,9 +3,10 @@ import { useForm } from 'react-hook-form';
 import { db } from '../config/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
+import PrimaryButton from './PrimaryButton';
 
 const categories = [
-    'Clothes', 'Songs', 'Movies', 'Books', 'Places To Visit', 'Food To Try', 'Cafe / Restaurants', 'Other'
+    'Clothes', 'Songs', 'Cafe / Restaurants', 'Books', 'Places To Visit', 'Food To Try', 'Movies', 'Other'
 ];
 
 const EMOJI_MAP = {
@@ -26,7 +27,7 @@ const GIF_MAP = {
     'Books': '/GIFs/Recommendation GIFs/book.gif',
     'Places To Visit': '/GIFs/Recommendation GIFs/earth.gif',
     'Food To Try': '/GIFs/Recommendation GIFs/eating.gif',
-    'Cafe / Restaurants': '/GIFs/Recommendation GIFs/eating.gif',
+    'Cafe / Restaurants': '/GIFs/Recommendation GIFs/restaurant.gif',
     'Other': '/GIFs/Recommendation GIFs/more.gif'
 };
 
@@ -430,7 +431,7 @@ const RecommendationForm = () => {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="recommendation-container"
             style={{
-                maxWidth: '700px',
+                maxWidth: '1000px',
                 margin: '0 auto',
                 background: 'transparent',
                 position: 'relative'
@@ -454,13 +455,14 @@ const RecommendationForm = () => {
                                 type="button"
                                 onClick={() => handleCategoryChange(cat)}
                                 style={{
+                                    position: 'relative',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '0.5rem',
                                     padding: '0.6rem 1.2rem',
                                     borderRadius: '30px',
-                                    border: `1px solid ${selectedCategory === cat ? 'var(--teal-color)' : 'rgba(128,128,128,0.2)'}`,
-                                    background: selectedCategory === cat ? '#f2f9f9' : 'var(--bg-color)',
+                                    border: `1px solid ${selectedCategory === cat ? 'transparent' : 'rgba(128,128,128,0.2)'}`,
+                                    background: 'transparent',
                                     color: selectedCategory === cat ? 'var(--teal-color)' : 'var(--subtle-color)',
                                     cursor: 'pointer',
                                     outline: 'none',
@@ -479,12 +481,31 @@ const RecommendationForm = () => {
                                     if (selectedCategory !== cat) {
                                         e.currentTarget.style.color = 'var(--subtle-color)';
                                         e.currentTarget.style.borderColor = 'rgba(128,128,128,0.2)';
-                                        e.currentTarget.style.background = 'var(--bg-color)';
+                                        e.currentTarget.style.background = 'transparent';
                                     }
                                 }}
                             >
-                                {GIF_MAP[cat] && <img src={GIF_MAP[cat]} alt={cat} style={{ width: '24px', height: '24px', objectFit: 'contain', mixBlendMode: 'multiply' }} />}
-                                {cat}
+                                {selectedCategory === cat && (
+                                    <motion.div
+                                        layoutId="categoryIndicator"
+                                        style={{
+                                            position: 'absolute',
+                                            top: -1, // Account for parent border
+                                            left: -1,
+                                            right: -1,
+                                            bottom: -1,
+                                            borderRadius: '30px',
+                                            border: '1px solid var(--teal-color)',
+                                            background: '#f2f9f9',
+                                            zIndex: 0
+                                        }}
+                                        transition={{ duration: 0.3, ease: [0.25, 0.8, 0.25, 1] }}
+                                    />
+                                )}
+                                <span style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    {GIF_MAP[cat] && <div style={{ backgroundColor: selectedCategory === cat ? '#f2f9f9' : 'var(--bg-color)', width: '32px', height: '32px' }}><img src={GIF_MAP[cat]} alt={cat} style={{ width: '32px', height: '32px', objectFit: 'contain', mixBlendMode: 'multiply' }} /></div>}
+                                    {cat}
+                                </span>
                             </button>
                         ))}
                     </div>
@@ -507,29 +528,10 @@ const RecommendationForm = () => {
                         {renderDynamicFields()}
                     </AnimatePresence>
 
-                    <motion.button
-                        whileHover={!isSubmittingForm ? { scale: 1.02 } : {}}
-                        whileTap={!isSubmittingForm ? { scale: 0.98 } : {}}
+                    <PrimaryButton
                         type="submit"
                         disabled={isSubmittingForm}
-                        style={{
-                            padding: '1.2rem',
-                            marginTop: '1.5rem',
-                            background: isSubmittingForm ? 'rgba(128,128,128,0.1)' : 'linear-gradient(135deg, var(--teal-color), #2d9d9b)',
-                            color: isSubmittingForm ? 'var(--subtle-color)' : '#ffffff',
-                            border: 'none',
-                            outline: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 600,
-                            fontSize: '1.1rem',
-                            cursor: isSubmittingForm ? 'not-allowed' : 'pointer',
-                            transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                            boxShadow: isSubmittingForm ? 'none' : '0 10px 20px rgba(53, 196, 194, 0.3)',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: '0.5rem'
-                        }}
+                        style={{ marginTop: '1.5rem', width: '100%' }}
                     >
                         {isSubmittingForm ? (
                             <motion.div
@@ -538,7 +540,7 @@ const RecommendationForm = () => {
                                 style={{ width: '20px', height: '20px', border: '2px solid var(--subtle-color)', borderTopColor: 'transparent', borderRadius: '50%' }}
                             />
                         ) : 'Broadcast Signal'}
-                    </motion.button>
+                    </PrimaryButton>
 
                     <AnimatePresence>
                         {submitStatus && (
@@ -616,6 +618,11 @@ const RecommendationForm = () => {
                     width: 100%;
                 }
                 
+                input.premium-input, select.premium-input {
+                    height: 3rem;
+                    box-sizing: border-box;
+                }
+                
                 .input-highlight {
                     position: absolute;
                     bottom: 0;
@@ -645,7 +652,7 @@ const RecommendationForm = () => {
                     appearance: none;
                     background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22rgba(128,128,128,0.5)%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
                     background-repeat: no-repeat;
-                    background-position: right 1.2rem top 50%;
+                    background-position: right 0.5rem center;
                     background-size: 0.65rem auto;
                     padding-right: 2.5rem;
                 }
@@ -659,14 +666,7 @@ const RecommendationForm = () => {
                     padding-top: 1rem;
                 }
                 
-                /* Custom Button Hover */
-                button[type="submit"]:hover {
-                    box-shadow: 0 15px 30px rgba(53, 196, 194, 0.4) !important;
-                    transform: translateY(-2px);
-                }
-                button[type="submit"]:active {
-                    transform: scale(0.98);
-                }
+                /* Removed duplicate custom button hover since PrimaryButton handles it now */
             `}</style>
         </motion.div>
     );
