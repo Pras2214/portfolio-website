@@ -127,7 +127,7 @@ const Home = () => {
                 <div style={{ width: '1px', height: '40px', background: 'var(--text-color)', marginBottom: '1.5rem', opacity: 0.5 }}></div>
                 <h2 style={{
                     fontFamily: 'var(--font-serif)',
-                    fontSize: '3rem',
+                    fontSize: 'clamp(2rem, 5vw, 3rem)',
                     textAlign: 'center',
                     fontStyle: 'italic',
                     maxWidth: '25ch',

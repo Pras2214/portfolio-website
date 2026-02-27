@@ -24,7 +24,7 @@
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
     gap: 2rem;
 }
 
@@ -176,6 +176,23 @@
     .project-arrow {
         opacity: 1;
         transform: translateX(0);
+    }
+
+    .project-content {
+        padding: 1.2rem;
+    }
+
+    .project-image-container {
+        height: 200px;
+    }
+
+    .project-name {
+        font-size: 1.25rem;
+    }
+
+    .project-description {
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
     }
 }
 

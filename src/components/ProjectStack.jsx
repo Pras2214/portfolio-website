@@ -73,6 +73,9 @@ const ImageTransitionMaterial = {
 function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredIndex, data, position: initialPos, rotation: initialRot, scrollRef, onOpen, gl }) {
     const meshRef = useRef();
     const coverMeshRef = useRef();
+    const { viewport } = useThree();
+    const isMobileViewport = viewport.width < 5; // Approx 768px break at normal camera distance
+    const scaleMultiplier = isMobileViewport ? 0.6 : 1.0;
     // const scroll = useScroll(); // Removed: using passed ref
     const isActive = activeId === index;
     const isAnyActive = activeId !== null;
@@ -238,10 +241,14 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
         // Position Logic
         if (isActive) {
             // STICKY MODE (Scrollytelling)
-            easing.damp3(meshRef.current.position, [3.5, 0, 0], 0.4, delta);
+            // On mobile, center the item horizontally and move it up significantly so text fits beneath.
+            // On desktop, push it to the left to make room for side text.
+            const targetX = isMobileViewport ? 0 : 3.5;
+            const targetY = isMobileViewport ? 2.0 : 0;
+            easing.damp3(meshRef.current.position, [targetX, targetY, 0], 0.4, delta);
 
             // Apply tilt effect to entire card when hovered (matching ProjectsPage effect)
-            if (isImageHovered) {
+            if (isImageHovered && !isMobileViewport) {
                 // Calculate tilt based on mouse position (matching ProjectsPage logic)
                 // Mouse position is normalized from -1 to 1
                 const rotateX = -mousePos.y * 0.087; // ~5 degrees max - up/down tilt
@@ -255,7 +262,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                     delta
                 );
             } else {
-                // Reset to flat when not hovered
+                // Reset to flat when not hovered (or mobile)
                 easing.dampE(
                     meshRef.current.rotation,
                     [Math.PI / 2, 0, 0],
@@ -264,7 +271,8 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
                 );
             }
 
-            easing.damp3(meshRef.current.scale, [1.45, 1.45, 1.45], 0.4, delta);
+            const activeScaleMultiplier = isMobileViewport ? 1.05 * scaleMultiplier : 1.45 * scaleMultiplier;
+            easing.damp3(meshRef.current.scale, [activeScaleMultiplier, activeScaleMultiplier, activeScaleMultiplier], 0.4, delta);
 
             // Keep cover mesh rotation flat and position fixed (no parallax)
             if (coverMeshRef.current) {
@@ -326,7 +334,7 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
         } else if (isAnyActive) {
             // Move Away (Inactive)
             easing.damp3(meshRef.current.position, [-20, initialPos[1], -10], 0.5, delta);
-            easing.damp3(meshRef.current.scale, [1, 1, 1], 0.4, delta);
+            easing.damp3(meshRef.current.scale, [1 * scaleMultiplier, 1 * scaleMultiplier, 1 * scaleMultiplier], 0.4, delta);
         } else {
             // IDLE / STACK MODE
             if (coverMeshRef.current) {
@@ -342,17 +350,18 @@ function ProjectCard({ index, activeId, setActiveId, hoveredIndex, setHoveredInd
             }
 
             let targetY = initialPos[1];
+            const hoverOffset = isMobileViewport ? 1.0 : 1.8;
             if (hoveredIndex !== null) {
-                if (index > hoveredIndex) targetY += 1.8;
-                if (index < hoveredIndex) targetY -= 1.8;
+                if (index > hoveredIndex) targetY += hoverOffset;
+                if (index < hoveredIndex) targetY -= hoverOffset;
             }
-            const targetZPos = isHovered ? 2.5 : 0;
+            const targetZPos = isHovered ? (isMobileViewport ? 1.5 : 2.5) : 0;
             easing.damp3(meshRef.current.position, [initialPos[0], targetY, targetZPos], 0.3, delta);
 
-            const targetScale = isHovered ? 1.05 : 1;
+            const targetScale = isHovered ? Math.min(1.05 * scaleMultiplier, 1) : 1 * scaleMultiplier;
             easing.damp3(meshRef.current.scale, [targetScale, targetScale, targetScale], 0.3, delta);
 
-            const targetRotX = isHovered ? 1.3 : initialRot[0];
+            const targetRotX = isHovered ? (isMobileViewport ? 1.4 : 1.3) : initialRot[0];
             const targetRotZ = isHovered ? 0 : initialRot[2];
 
             if (hoveredIndex === null) {
@@ -550,7 +559,6 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
     // const scroll = useScroll(); // Removed
     const groupRef = useRef();
     const [hoveredIndex, setHoveredIndex] = useState(null);
-    const GAP = 1.5;
     const { gl } = useThree(); // Restore useThree usage at parent level
 
     // FLICKER FIX: Transition State
@@ -589,11 +597,15 @@ export default function ProjectStack({ activeId, setActiveId, data = [], onLoad,
     const activeRef = useRef(activeId);
     activeRef.current = activeId;
 
+    const { viewport } = gl ? { viewport: gl.domElement.getBoundingClientRect() } : useThree();
+    const isMobileViewport = (viewport?.width || window.innerWidth) < 768;
+
     // Calculate Start Position (Dynamic based on data length)
     // Same logic as inside useFrame to ensure consistency
+    const GAP = isMobileViewport ? 1.0 : 1.5;
     const endY = 0;
     const topCardY = (data.length - 1) * GAP;
-    const startY = -topCardY - 1.5;
+    const startY = -topCardY - GAP;
 
     useFrame((state, delta) => {
         if (groupRef.current) {

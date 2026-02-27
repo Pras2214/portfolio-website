@@ -13,6 +13,10 @@ const SignalList = ({ items }) => {
                 ? prev.filter(itemId => itemId !== id)
                 : [...prev, id]
         );
+        // Clear hover state on mobile to ensure proper toggle closure
+        if (window.innerWidth <= 768) {
+            setHoveredId(null);
+        }
     };
 
     return (

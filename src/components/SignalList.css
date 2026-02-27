@@ -105,3 +105,28 @@
     line-height: 1.6;
     margin-top: 0;
 }
+
+@media (max-width: 768px) {
+    .signal-title {
+        font-size: 1.2rem;
+    }
+
+    .signal-number {
+        width: 30px;
+        font-size: 0.8rem;
+    }
+
+    .signal-content-wrapper {
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+    }
+
+    .signal-details p {
+        padding-left: 0;
+        font-size: 1rem;
+    }
+
+    .signal-header {
+        align-items: center;
+    }
+}

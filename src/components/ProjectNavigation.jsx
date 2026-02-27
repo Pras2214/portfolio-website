@@ -49,23 +49,44 @@ export function ProjectNavigationLogic({ data, setActiveIndex, setJumpTo }) {
 // UI: The Visual Component (Outside Canvas)
 // ------------------------------------------------------------------
 export function ProjectNavigationUI({ data, activeIndex, onSelect, isProjectOpen = false }) {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     if (!data) return null;
 
     // Reverse data for rendering so Index N (Top of Stack) is at Top of Screen
+    // On mobile, we might want it left-to-right, but keeping the same order is fine.
     const reversedData = [...data].map((item, i) => ({ ...item, originalIndex: i })).reverse();
 
     return (
         <div style={{
             position: 'fixed',
-            right: '40px',
-            top: '50%',
-            transform: 'translateY(-50%)',
+            right: isMobile ? 'auto' : '40px',
+            left: isMobile ? '50%' : 'auto',
+            top: isMobile ? 'auto' : '50%',
+            bottom: isMobile ? '30px' : 'auto',
+            transform: isMobile ? 'translateX(-50%)' : 'translateY(-50%)',
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-            gap: '12px', // Slightly larger gap for vertical timeline look
+            flexDirection: isMobile ? 'row' : 'column',
+            alignItems: isMobile ? 'center' : 'flex-end',
+            justifyContent: 'center',
+            gap: isMobile ? '16px' : '12px', // Slightly larger gap on horizontal
+            background: isMobile ? 'rgba(255, 255, 255, 0.4)' : 'transparent',
+            padding: isMobile ? '12px 24px' : '0',
+            borderRadius: isMobile ? '30px' : '0',
+            backdropFilter: isMobile ? 'blur(10px)' : 'none',
+            WebkitBackdropFilter: isMobile ? 'blur(10px)' : 'none',
+            border: isMobile ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
+            boxShadow: isMobile ? '0 4px 16px rgba(0,0,0,0.05)' : 'none',
             zIndex: 100,
-            pointerEvents: 'none'
+            opacity: (isMobile && isProjectOpen) ? 0 : 1,
+            pointerEvents: (isMobile && isProjectOpen) ? 'none' : (isMobile ? 'auto' : 'none'),
+            transition: 'opacity 0.3s ease'
         }}>
             {reversedData.map((project) => (
                 <NavPill
@@ -75,13 +96,14 @@ export function ProjectNavigationUI({ data, activeIndex, onSelect, isProjectOpen
                     isActive={project.originalIndex === activeIndex}
                     onClick={() => onSelect && onSelect(project.originalIndex)}
                     isProjectOpen={isProjectOpen}
+                    isMobile={isMobile}
                 />
             ))}
         </div>
     );
 }
 
-const NavPill = ({ title, type, isActive, onClick, isProjectOpen }) => {
+const NavPill = ({ title, type, isActive, onClick, isProjectOpen, isMobile }) => {
     const [hover, setHover] = useState(false);
     const activeOrHover = isActive || hover;
 
@@ -99,9 +121,10 @@ const NavPill = ({ title, type, isActive, onClick, isProjectOpen }) => {
             style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'flex-end',
-                height: '44px',
-                paddingLeft: '20px',
+                justifyContent: 'center',
+                width: isMobile ? '24px' : 'auto',
+                height: isMobile ? '24px' : '44px',
+                paddingLeft: isMobile ? '0' : '20px',
                 cursor: 'pointer',
                 pointerEvents: 'auto',
                 position: 'relative',
@@ -112,11 +135,13 @@ const NavPill = ({ title, type, isActive, onClick, isProjectOpen }) => {
             {/* Project Title & Type Tooltip */}
             <div style={{
                 position: 'absolute',
-                right: '45px',
+                right: isMobile ? 'auto' : '45px',
+                bottom: isMobile ? '35px' : 'auto',
+                left: isMobile ? '50%' : 'auto',
                 opacity: activeOrHover ? 1 : 0,
-                transform: activeOrHover ? 'translateX(0)' : 'translateX(10px)',
+                transform: activeOrHover ? (isMobile ? 'translateX(-50%) translateY(0)' : 'translateX(0)') : (isMobile ? 'translateX(-50%) translateY(10px)' : 'translateX(10px)'),
                 transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
-                textAlign: 'right',
+                textAlign: isMobile ? 'center' : 'right',
                 pointerEvents: 'none',
                 // Restored Box (Smaller & Seamless)
                 padding: '6px 12px',
@@ -150,13 +175,13 @@ const NavPill = ({ title, type, isActive, onClick, isProjectOpen }) => {
 
             {/* The Pill / Dot Indicator */}
             <div style={{
-                width: isActive ? '32px' : (hover ? '32px' : '10px'),
-                height: isActive ? '10px' : (hover ? '10px' : '10px'),
+                width: isActive ? (isMobile ? '12px' : '32px') : (hover ? (isMobile ? '12px' : '32px') : (isMobile ? '8px' : '10px')),
+                height: isActive ? (isMobile ? '12px' : '10px') : (hover ? (isMobile ? '12px' : '10px') : (isMobile ? '8px' : '10px')),
                 background: isActive ? activeColor : 'rgba(0,0,0,0.3)',
                 borderRadius: '20px',
                 transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 flexShrink: 0,
-                boxShadow: isActive ? `0 0 0 4px ${isProjectOpen ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.05)'}` : 'none'
+                boxShadow: isActive ? `0 0 0 ${isMobile ? '3px' : '4px'} ${isProjectOpen ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.05)'}` : 'none'
             }} />
         </div>
     );

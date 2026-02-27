@@ -119,7 +119,6 @@ const RecommendationsAdminPage = () => {
 
     const handlePasswordSubmit = (e) => {
         e.preventDefault();
-        // Set the password here. Currently set to 'admin'
         if (passwordInput === import.meta.env.VITE_ADMIN_PASSWORD) {
             setIsAuthenticated(true);
             setPasswordError('');
@@ -135,7 +134,7 @@ const RecommendationsAdminPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '2rem'
+                padding: '2rem 1rem'
             }}>
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
@@ -145,7 +144,7 @@ const RecommendationsAdminPage = () => {
                         background: 'rgba(128,128,128,0.02)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        padding: '3rem',
+                        padding: 'clamp(1.5rem, 5vw, 3rem)',
                         borderRadius: '24px',
                         border: '1px solid rgba(128,128,128,0.1)',
                         boxShadow: '0 30px 60px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.1)',

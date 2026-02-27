@@ -25,6 +25,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
 .container {
   width: 100%;
   margin: 0 auto;

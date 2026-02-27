@@ -817,7 +817,7 @@ const PortfolioPage = () => {
                 right: '2.5rem',
                 zIndex: 10,
             }}>
-                <span className="animated-credit" style={{ fontFamily: "var(--font-serif)", fontSize: '1rem', fontStyle: 'italic', fontWeight: 'bold' }}>
+                <span className="animated-credit hide-on-mobile" style={{ fontFamily: "var(--font-serif)", fontSize: '1rem', fontStyle: 'italic', fontWeight: 'bold' }}>
                     Designed & Crafted by Prasann Parikh
                 </span>
             </div>

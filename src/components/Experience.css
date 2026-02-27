@@ -218,6 +218,17 @@
     }
 
     .timeline-meta {
-        align-items: center;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .timeline-dot {
+        display: none;
+    }
+
+    .timeline-description li {
+        font-size: 1rem;
+        padding-left: 1rem;
     }
 }

@@ -9,6 +9,14 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
     const indicatorRef = useRef();
     const [showHint, setShowHint] = useState(false);
 
+    // Responsive State
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     useEffect(() => {
         // Delay showing the hint so it appears after the card settles
         const timer = setTimeout(() => setShowHint(true), 500); // Faster entrance
@@ -141,8 +149,11 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                     <div key={i} style={{
                         height: '100vh',
                         display: 'flex',
-                        alignItems: 'center',
-                        paddingLeft: '5%',
+                        alignItems: isMobile ? 'flex-end' : 'center',
+                        justifyContent: isMobile ? 'center' : 'flex-start',
+                        paddingLeft: isMobile ? '4%' : '5%',
+                        paddingRight: isMobile ? '4%' : '0',
+                        paddingBottom: isMobile ? '2vh' : '0',
                         boxSizing: 'border-box',
                         position: 'relative' // For absolute anchoring
                     }}>
@@ -187,8 +198,14 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                         <div
                             style={{
                                 maxWidth: '480px',
-                                padding: '2rem',
-                                paddingLeft: '2.5rem',
+                                width: isMobile ? '100%' : 'auto',
+                                maxHeight: isMobile ? '55vh' : 'none',
+                                overflowY: 'auto',
+                                scrollbarWidth: 'none', // Firefox
+                                msOverflowStyle: 'none', // IE/Edge
+                                WebkitOverflowScrolling: 'touch',
+                                padding: isMobile ? '1.5rem' : '2rem',
+                                paddingLeft: isMobile ? '1.5rem' : '2.5rem',
                                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%)',
                                 backdropFilter: 'blur(28px) saturate(180%)',
                                 borderRadius: '20px',
@@ -201,8 +218,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                     0 8px 8px rgba(0, 0, 0, 0.03),
                                     0 16px 16px rgba(0, 0, 0, 0.03),
                                     inset 0 1px 0 rgba(255, 255, 255, 0.15)
-                                `,
-                                overflow: 'hidden'
+                                `
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -232,7 +248,7 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                             {/* Large Decorative Number with Shadow */}
                             <span style={{
                                 display: 'block',
-                                fontSize: '4rem',
+                                fontSize: isMobile ? '3rem' : '4rem',
                                 fontFamily: 'var(--font-serif)',
                                 fontWeight: '700',
                                 color: 'rgba(0, 0, 0, 0.05)',
@@ -250,8 +266,8 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                             {/* Title with Subtle Shadow */}
                             <h2 style={{
                                 fontFamily: 'var(--font-serif)',
-                                fontSize: '2.25rem',
-                                margin: '-0.2rem 0 1rem 0.5rem',
+                                fontSize: isMobile ? '1.75rem' : '2.25rem',
+                                margin: isMobile ? '-0.2rem 0 0.8rem 0' : '-0.2rem 0 1rem 0.5rem',
                                 color: 'var(--text-color)',
                                 lineHeight: 1.1,
                                 fontStyle: 'italic',
@@ -287,10 +303,10 @@ export default function ProjectScrollyTelling({ project, onClose, visible = true
                                 {section.text ? (
                                     <>
                                         <p style={{
-                                            fontSize: '1.15rem',
-                                            lineHeight: 1.75,
+                                            fontSize: isMobile ? '1rem' : '1.15rem',
+                                            lineHeight: isMobile ? 1.6 : 1.75,
                                             fontWeight: '300',
-                                            margin: '0 0 2rem',
+                                            margin: isMobile ? '0 0 1.5rem' : '0 0 2rem',
                                             color: 'var(--text-color)',
                                             opacity: 0.9,
                                             letterSpacing: '0.3px'
